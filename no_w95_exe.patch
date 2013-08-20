@@ -1,0 +1,10 @@
+--- origsrc/gap4r6/cnf/Makegap.in	2013-07-20 16:02:01.000000000 -0400
++++ src/gap4r6/cnf/Makegap.in	2013-08-20 09:46:55.853688100 -0400
+@@ -39,7 +39,6 @@ gap: $(OBJECTS) $(ITANIUMOBJ) $(EXTOBJS)
+ gapdll: $(OBJECTS) $(ITANIUMOBJ) $(EXTOBJS) $(GMP_LIBS)
+ 	$(CC) $(CPPFLAGS) $(GMP_CFLAGS) $(CFLAGS) -DCOMPILECYGWINDLL -o gap.o -c ../../src/gap.c
+ 	$(CC) $(LDFLAGS) -o gap.dll -shared $(OBJECTS) $(ITANIUMOBJ) -lm $(MPILIBS) $(EXTOBJS) $(GMP_LIBS) $(CONFLIBS)
+-	$(CC) $(LDFLAGS) -o gapw95 ../../src/gapw95.c $(CPPFLAGS) $(GMP_CFLAGS) $(CFLAGS) -DCOMPILECYGWINDLL gap.dll
+ 
+ # dependencies are automatically generated
+ ariths.o: ../../Makefile @srcdir@/ariths.c @srcdir@/system.h config.h @srcdir@/gasman.h \

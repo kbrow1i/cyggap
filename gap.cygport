@@ -1,0 +1,73 @@
+NAME="gap"
+VERSION=4.6.5
+LONG_VERSION=4r6p5_2013_07_20-20_02
+RELEASE=1
+
+SRC_DIR="gap4r6"
+
+HOMEPAGE="http://www.gap-system.org/"
+CATEGORY="Math"
+PKG_NAMES="gap xgap"
+
+gap_SUMMARY="A system for computational discrete algebra"
+xgap_SUMMARY="A graphical user interface for GAP"
+
+gap_DESCRIPTION="GAP is a system for computational discrete algebra, with particular
+emphasis on Computational Group Theory.  GAP provides a programming
+language, a library of thousands of functions implementing algebraic
+algorithms written in the GAP language, and large data libraries of
+algebraic objects."
+
+xgap_DESCRIPTION="The XGAP package provides a graphical user interface for GAP"
+
+
+SRC_URI="ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2"
+
+PATCH_URI="
+	no_cygwin32.patch
+	no_cygwin_specific_junk.patch
+	build_gap_dll.patch
+	gmp_libs.patch
+	no_w95_exe.patch"
+
+gap_CONTENTS="
+	--exclude=usr/bin/xgap
+	--exclude=usr/lib/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe
+	usr/bin/
+	usr/lib"
+
+xgap_CONTENTS="
+	usr/bin/xgap
+	usr/lib/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe"
+
+DIFF_EXCLUDES="configure.out"
+
+src_compile() {
+	lndirs
+	cd ${B}/cnf
+	make
+	cd ..
+	autoconf
+	./configure --with-gmp=system
+	make
+	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR="/usr/lib/gap4r6"|' bin/gap-default32.sh
+	cd pkg/xgap
+	./configure
+	make
+	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR="/usr/lib/gap4r6"|' bin/xgap.sh
+}
+
+src_install() {
+	cd ${B}
+	GAP_DIR="/usr/lib/gap4r6"
+	dodir ${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32
+	dodir ${GAP_DIR}/pkg/xgap/bin/i686-pc-cygwin-gcc
+	cp -v bin/i686-pc-cygwin-gcc-default32/gap.{dll,exe} \
+	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/
+	cp -v pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe \
+	    ${D}${GAP_DIR}/pkg/xgap/bin/i686-pc-cygwin-gcc/
+	newbin bin/gap-default32.sh gap
+	newbin pkg/xgap/bin/xgap.sh xgap
+	cd ${S}
+	cp -a doc etc grp lib pkg prim small trans tst ${D}${GAP_DIR}
+}

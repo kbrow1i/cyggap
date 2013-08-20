@@ -1,0 +1,38 @@
+--- origsrc/gap4r6/Makefile.in	2013-07-20 16:02:01.000000000 -0400
++++ src/gap4r6/Makefile.in	2013-08-19 18:30:36.289036900 -0400
+@@ -106,6 +106,8 @@ extern: config
+ compile: extern
+ 	( cd bin/$(GAPARCH); $(MAKE) ABI='$(ABI)' CC='$(CC)' GMP_VER='$(GMP_VER)' GMP_CFLAGS='$(GMP_CFLAGS)' GMP_LIBS='$(GMP_LIBS)' CONFIGNAME='$(CONFIGNAME)' )
+ 	chmod +x bin/gap-$(CONFIGNAME).sh
++	( cd bin/$(GAPARCH) ; $(MAKE) gapdll ABI='$(ABI)' CC='$(CC)' GMP_VER='$(GMP_VER)' GMP_CFLAGS='$(GMP_CFLAGS)' GMP_LIBS='$(GMP_LIBS)' CONFIGNAME='$(CONFIGNAME)' )
++	# cp bin/$(GAPARCH)/gap.dll bin
+ 
+ static: extern
+ 	( cd bin/$(GAPARCH) ; $(MAKE) static CC='$(CC)' ABI='$(ABI)' )
+@@ -252,7 +254,7 @@ testpackages:
+             | $(TESTGAP) -L wsp.g > /dev/null )
+ 	( chmod 777 testpackages.in; ./testpackages.in; rm testpackages.in )
+ 	( rm wsp.g )
+-	
++
+ testpackagesload:
+ 	mkdir -p dev/log
+ 	( echo 'ReadGapRoot( "tst/testutil.g" ); \
+@@ -303,7 +305,7 @@ testpackagesvars:
+ 	( chmod 777 testpackagesvars.in; ./testpackagesvars.in > \
+             `date -u +dev/log/testpackagesvars_%Y-%m-%d-%H-%M`; rm testpackagesvars.in )
+ 	( rm wsp.g )
+-	
++
+ testmanuals1:
+ 	(cd doc/ref; ../../bin/gap.sh -r extractexamples.g runexamples.g)
+ 	(cd doc/tut; ../../bin/gap.sh -r extractexamples.g runexamples.g)
+@@ -410,7 +412,7 @@ cygwin:	extern
+ 	chmod +x cnf/instcygwinterminfo.sh
+ 	cnf/instcygwinterminfo.sh
+ 	( if which peflags ; then peflags --cygwin-heap=2048 bin/gapw95.exe ; fi )
+-	
++
+ winbinp:
+ 	( tar cfz ../winbin.tgz bin/*.dll bin/*.exe \
+           bin/$(GAPARCH)/gac \

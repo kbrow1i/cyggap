@@ -1,0 +1,11 @@
+--- origsrc/gap4r6/configure.in	2013-07-20 16:02:01.000000000 -0400
++++ src/gap4r6/configure.in	2013-08-19 18:37:30.796745400 -0400
+@@ -103,7 +103,7 @@ case "$with_gmp" in
+     ;;
+   system)
+     GMP_CFLAGS="-m${ABI}"
+-    GMP_LIBS="-lgmp"
++    GMP_LIBS="/usr/lib/libgmp.dll.a"
+     MAKE_GMP=""
+     ;;
+   *)
