@@ -1,0 +1,18 @@
+--- origsrc/gap4r6/InstPackages.sh	2013-08-21 15:57:06.490576800 -0400
++++ src/gap4r6/InstPackages.sh	2013-08-21 16:32:09.644870300 -0400
+@@ -176,9 +176,9 @@ cd ..
+ # If you  miss one of  these under Linux you  can usually just  install some
+ # more packages of your favorite distribution. The development files usually
+ # come in some package with "dev" in its name.
+-cd xgap
+-./configure
+-make
+-rm -f ../../bin/xgap.sh
+-cp bin/xgap.sh ../../bin/
+-cd ..
++# cd xgap
++# ./configure
++# make
++# rm -f ../../bin/xgap.sh
++# cp bin/xgap.sh ../../bin/
++# cd ..

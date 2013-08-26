@@ -1,47 +1,5 @@
 --- origsrc/gap4r6/src/streams.c	2013-07-20 16:11:08.000000000 -0400
 +++ src/gap4r6/src/streams.c	2013-08-18 14:10:39.057716900 -0400
-@@ -1957,9 +1957,6 @@ Obj FuncREAD_ALL_FILE (
- 	SET_LEN_STRING(str, len);
- 	syBuffers[bufno].bufstart += lstr;
-       }
--#if SYS_IS_CYGWIN32
-- getmore:
--#endif
-     while (ilim == -1 || len < ilim ) {
-       if ( len > 0 && !HasAvailableBytes(ifid))
- 	break;
-@@ -1998,31 +1995,6 @@ Obj FuncREAD_ALL_FILE (
- 
-     /* fix the length of <str>                                             */
-     len = GET_LEN_STRING(str);
--#if SYS_IS_CYGWIN32
--    /* line end hackery */
--    {
--      UInt i = 0,j = 0;
--      while ( i < len )
--	{
--	  if (CHARS_STRING(str)[i] == '\r')
--	    {
--	      if (i < len -1 && CHARS_STRING(str)[i+1] == '\n')
--		{
--		  i++;
--		  continue;
--		}
--	      else
--		CHARS_STRING(str)[i] = '\n';
--	    }
--	  CHARS_STRING(str)[j++] = CHARS_STRING(str)[i++];
--	}
--      len = j;
--      SET_LEN_STRING(str, len);
--      if (ilim != -1 && len < ilim)
--	goto getmore;
--      
--    }
--#endif
-     ResizeBag( str, SIZEBAG_STRINGLEN(len) );
- 
-     /* and return                                                          */
 @@ -2125,8 +2097,6 @@ Obj FuncREAD_STRING_FILE (
              "you can replace <fid> via 'return <fid>;'" );
      }
@@ -61,17 +19,6 @@
      len = 0;
 --- origsrc/gap4r6/src/sysfiles.c	2013-07-20 16:11:08.000000000 -0400
 +++ src/gap4r6/src/sysfiles.c	2013-08-18 14:18:39.582961400 -0400
-@@ -81,10 +81,6 @@ typedef void       sig_handler_t ( int )
- extern int errno;
- #endif
- 
--#if SYS_IS_CYGWIN32
--# include       <process.h>
--#endif
--
- 
- /* utility to check return value of 'write'  */
- ssize_t writeandcheck(int fd, const char *buf, size_t count) {
 @@ -1083,7 +1079,6 @@ extern void syStopraw (
    struct termio   syOld, syNew;           /* old and new terminal state      */
  
@@ -80,139 +27,6 @@
      #define TCSETAW TCSETA
    #endif
  
-@@ -1650,19 +1645,6 @@ Int SyFseek (
- */
- #if HAVE_SGTTY_H || HAVE_TERMIO_H || HAVE_TERMIOS_H
- 
--/* In the cygwin environment it is not predictable if text files get the
-- * '\r' in their line ends filtered out *before* GAP sees them. This leads
-- * to problem with continuation of strings or integers over several lines in
-- * GAP input. Therefore we introduce a hack which removes such '\r's
-- * before '\n's on such a system. Add here if there are other systems with
-- * a similar problem.
-- */
--
--#if SYS_IS_CYGWIN32
--#  define LINE_END_HACK 1
--#endif
--
--
- Int syGetchTerm (
-     Int                 fid )
- {
-@@ -3131,89 +3113,6 @@ extern char ** environ;
- 
- void NullSignalHandler(int scratch) {}
- 
--#if SYS_IS_CYGWIN32
--
--UInt SyExecuteProcess (
--    Char *                  dir,
--    Char *                  prg,
--    Int                     in,
--    Int                     out,
--    Char *                  args[] )
--{
--    int savestdin, savestdout;
--    Int tin, tout;
--    int res;
--
--    /* change the working directory                                    */
--    if ( chdir(dir) == -1 ) return -1;
--
--    /* if <in> is -1 open "/dev/null"                                  */
--    if ( in == -1 ) {
--        tin = open( "/dev/null", O_RDONLY );
--        if ( tin == -1 ) return -1;
--    } else tin = SyFileno(in);
--
--    /* if <out> is -1 open "/dev/null"                                 */
--    if ( out == -1 ) {
--        tout = open( "/dev/null", O_WRONLY );
--        if ( tout == -1 ) {
--            if (in == -1) close(tin);
--            return -1;
--        }
--    } else tout = SyFileno(out);
--
--    /* set standard input to <in>, standard output to <out>            */
--    savestdin = -1;   /* Just to please the compiler */
--    if ( tin != 0 ) {
--        savestdin = dup(0);
--        if (savestdin == -1 || dup2(tin,0) == -1) {
--            if (out == -1) close(tout);
--            if (in == -1) close(tin);
--            return -1;
--        }
--        fcntl( 0, F_SETFD, 0 );
--    }
--
--    if ( tout != 1 ) {
--        savestdout = dup(1);
--        if (savestdout == -1 || dup2( tout, 1 ) == -1) {
--            if (tin != 0) {
--                close(0);
--                dup2(savestdin,0);
--                close(savestdin);
--            }
--            if (out == -1) close(tout);
--            if (in == -1) close(tin);
--            return -1;
--        }
--        fcntl( 1, F_SETFD, 0 );
--    }
--
--    /* now try to execute the program                                  */
--    res = spawnve( _P_WAIT, prg, (const char * const *) args, 
--                                 (const char * const *) environ );
--
--    /* Now repair the open file descriptors: */
--    if (tout != 1) {
--        close(1);
--        dup2(savestdout,1);
--        close(savestdout);
--    }
--    if (tin != 0) {
--        close(0);
--        dup2(savestdin,0);
--        close(savestdin);
--    }
--    if (out == -1) close(tout);
--    if (in == -1) close(tin);
--
--    /* Report result: */
--    if (res < 0) return -1;
--    return WEXITSTATUS(res);
--}
--    
--#else
--
- UInt SyExecuteProcess (
-     Char *                  dir,
-     Char *                  prg,
-@@ -3340,9 +3239,6 @@ UInt SyExecuteProcess (
- }
- #endif
- 
--#endif
--
--
- /****************************************************************************
- **
- 
-@@ -3724,12 +3620,7 @@ Char * SyTmpname ( void )
- *f  SyTmpdir( <hint> )  . . . . . . . . . . . . . . . . . . . . using `mkdir'
- */
- 
--#if SYS_IS_CYGWIN32
--#define TMPDIR_BASE "/cygdrive/c/WINDOWS/Temp/"
--#else
- #define TMPDIR_BASE "/tmp/"
--#endif
--
- 
- #if HAVE_MKDTEMP
- Char * SyTmpdir( const Char * hint )
 --- origsrc/gap4r6/src/system.c	2013-07-20 16:11:08.000000000 -0400
 +++ src/gap4r6/src/system.c	2013-08-18 14:07:51.734222600 -0400
 @@ -458,7 +458,7 @@ UInt SyStopTime;
@@ -236,37 +50,6 @@
  
  #include <time.h> /* for CLOCKS_PER_SEC */
  
-@@ -1467,17 +1465,6 @@ void SySleep ( UInt secs )
- void SyExit (
-     UInt                ret )
- {
--#if SYS_IS_CYGWIN32
--  if (ret!=0) {
--    Int c;
--    fputs("gap: Press <Enter> to end program\n",stderr);
--    do {
--      c=SyGetch(1);   /* wait for the user to type <return> */
--    } while (c!='\n' && c!=' ');
--  }
--
--#endif
--
-     exit( (int)ret );
- }
- 
-@@ -1558,12 +1545,6 @@ void SySetGapRootPath( const Char * stri
-         while ( *p && *p != ';' ) {
-             *q = *p++;
- 
--#if SYS_IS_CYGWIN32
--            /* fix up for DOS */
--            if (*q == '\\')
--              *q = '/';
--#endif
--            
-             q++;
-         }
-         if ( q == SyGapRootPaths[n] ) {
 @@ -1782,12 +1763,8 @@ void InitSystem (
      SyAllocPool = 4096L*1024*1024;   /* Note this is in bytes! */
  #else
@@ -280,31 +63,43 @@
      SyStorOverrun = 0;
      SyStorKill = 0;
      SyStorMin = SY_STOR_MIN;         /* see system.h */
-@@ -1865,18 +1842,12 @@ void InitSystem (
- 
-     SySystemInitFile[0] = '\0';
-     strxcpy( SySystemInitFile, "lib/init.g", sizeof(SySystemInitFile) );
--#if SYS_IS_CYGWIN32
--    SySetGapRootPath( SyWindowsPath );
--#else
--
- #ifdef SYS_DEFAULT_PATHS
-     SySetGapRootPath( SYS_DEFAULT_PATHS );
- #else
-     SySetGapRootPath( "./" );
+--- origsrc/gap4r6/pkg/cvec/src/cvec.c	2013-07-19 05:09:23.000000000 -0400
++++ src/gap4r6/pkg/cvec/src/cvec.c	2013-08-21 10:05:48.147248900 -0400
+@@ -44,10 +44,6 @@ WORD myarena[(2048*1024+1024*1024)/4];
+ WORD *arenastart;
  #endif
  
+-#if SYS_IS_CYGWIN32
+-#include <cygwin/in.h>
 -#endif
 -
-     /* save the original command line for export to GAP */
-     SyOriginalArgc = argc;
-     SyOriginalArgv = argv;
-@@ -2004,8 +1975,6 @@ void InitSystem (
-         strxcpy(DotGapPath, getenv("HOME"), sizeof(DotGapPath));
- # if defined(SYS_IS_DARWIN) && SYS_IS_DARWIN
-         strxcat(DotGapPath, "/Library/Preferences/GAP;", sizeof(DotGapPath));
--# elif defined(__CYGWIN__)
--        strxcat(DotGapPath, "/_gap;", sizeof(DotGapPath));
- # else
-         strxcat(DotGapPath, "/.gap;", sizeof(DotGapPath));
- # endif
+ /* Our basic unit is a C unsigned long: */
+ typedef unsigned long Word;  /* Our basic unit for operations, 32 or 64 bits */
+ #define Word32 UInt4
+--- origsrc/gap4r6/pkg/io/src/io.c	2013-07-19 05:09:32.000000000 -0400
++++ src/gap4r6/pkg/io/src/io.c	2013-08-21 10:03:34.639612700 -0400
+@@ -80,16 +80,12 @@ const char * Revision_io_c =
+ #ifdef HAVE_NETINET_TCP_H
+ #include <netinet/tcp.h>
+ #endif
+-#if SYS_IS_CYGWIN32
+-#include <cygwin/in.h>
+-#endif
+ 
+ /* The following seems to be necessary to run under modern gcc compilers
+  * which have the ssp stack checking enabled. Hopefully this does not
+  * hurt in future or other versions... */
+ #ifdef __GNUC__
+ #if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
+-#if SYS_IS_CYGWIN32 == 0
+ extern void __stack_chk_fail();
+ void __stack_chk_fail_local (void)
+ {
+@@ -97,7 +93,6 @@ void __stack_chk_fail_local (void)
+ }
+ #endif
+ #endif
+-#endif
+ 
+ 
+ /* Functions that are done:

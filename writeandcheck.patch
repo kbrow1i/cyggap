@@ -1,0 +1,25 @@
+--- origsrc/gap4r6/src/sysfiles.c	2013-08-22 16:09:32.768343200 -0400
++++ src/gap4r6/src/sysfiles.c	2013-08-22 16:31:33.409879600 -0400
+@@ -84,12 +84,17 @@ extern int errno;
+ 
+ /* utility to check return value of 'write'  */
+ ssize_t writeandcheck(int fd, const char *buf, size_t count) {
+-  int ret;
+-  ret = write(fd, buf, count);
+-  if (ret < 0)
+-    ErrorQuit("Cannot write to file descriptor %d, see 'LastSystemError();'\n",
++    static int depth = 0;  /* Recursion depth */
++    int ret;
++    ret = write(fd, buf, count);
++    if (ret < 0 && depth == 0)
++    {
++        depth++;
++        ErrorQuit("Cannot write to file descriptor %d, see 'LastSystemError();'\n",
+                fd, 0L);
+-  return ret;
++        depth--;
++    }
++    return ret;
+ }
+ 
+ 

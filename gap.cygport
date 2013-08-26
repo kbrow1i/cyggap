@@ -1,7 +1,7 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=1
+RELEASE=2
 
 SRC_DIR="gap4r6"
 
@@ -21,53 +21,114 @@ algebraic objects."
 xgap_DESCRIPTION="The XGAP package provides a graphical user interface for GAP"
 
 
-SRC_URI="ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2"
+SRC_URI="
+	ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2
+	http://www.gap-system.org/Download/InstPackages.sh
+"
 
 PATCH_URI="
+	build_gap_dll.patch
+	cflags.patch
+	cygwin_is_not_windows.patch
+	fix_shebang.patch
+	force_autoconf.patch
+	gmp_libs.patch
+	ncursesw.patch
+	no_ace.patch
 	no_cygwin32.patch
 	no_cygwin_specific_junk.patch
-	build_gap_dll.patch
-	gmp_libs.patch
-	no_w95_exe.patch"
-
+	no_float.patch
+	no_w95_exe.patch
+	no_xgap.patch
+	writeandcheck.patch
+"
 gap_CONTENTS="
 	--exclude=usr/bin/xgap
-	--exclude=usr/lib/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe
+	--exclude=usr/share/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe
 	usr/bin/
-	usr/lib"
+	usr/share"
 
 xgap_CONTENTS="
 	usr/bin/xgap
-	usr/lib/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe"
+	usr/share/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe"
 
-DIFF_EXCLUDES="configure.out"
+DIFF_EXCLUDES="configure.out config.hin configure Makegap.in InstPackages.sh"
 
 src_compile() {
-	lndirs
-	cd ${B}/cnf
+	cd ${S}
+	touch configure.in
+	cd cnf
+	touch configure.in
 	make
 	cd ..
-	autoconf
-	./configure --with-gmp=system
+	cd pkg/xgap
+	touch configure.in
+	cd cnf
+	touch configure.in
 	make
-	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR="/usr/lib/gap4r6"|' bin/gap-default32.sh
+	cd ../..		# Now back in pkg
+	# cd ../../fr-*
+	# cd cnf
+	# autoreconf -f -i -v -I m4
+	# cp -v configure ../
+	# cd ../..		# Now back in pkg
+	# DIRS="cvec io linboxing orb"
+	# for d in ${DIRS}
+	# do
+	#     pushd ${d}
+	#     cygautoreconf -I m4
+	#     popd
+	# done
+	# DIRS="grape/nauty22 guava-3.12/src/leon pargap nq-2.4 qaos simpcomp"
+	# for d in ${DIRS}
+	# do
+	#     pushd ${d}
+	#     cygautoreconf
+	#     popd
+	# done
+	lndirs
+	cd ${B}
+	./configure --with-gmp=/usr
+	make
 	cd pkg/xgap
 	./configure
 	make
-	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR="/usr/lib/gap4r6"|' bin/xgap.sh
+	cd ../ace
+	./configure
+	make
+	cd ..
+	cp ../InstPackages.sh .
+	chmod 755 InstPackages.sh
 }
 
 src_install() {
 	cd ${B}
-	GAP_DIR="/usr/lib/gap4r6"
+	newbin bin/gap.sh gap
+	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR=/usr/share/gap4r6|' \
+	    ${D}/usr/bin/gap
+	newbin pkg/xgap/bin/xgap.sh xgap
+	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR=/usr/share/gap4r6|' \
+	    ${D}/usr/bin/xgap
+	GAP_DIR=/usr/share/gap4r6
+	dodir ${GAP_DIR}
+	cp -v sysinfo.gap ${D}${GAP_DIR}/
 	dodir ${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32
 	dodir ${GAP_DIR}/pkg/xgap/bin/i686-pc-cygwin-gcc
-	cp -v bin/i686-pc-cygwin-gcc-default32/gap.{dll,exe} \
+	dodir ${GAP_DIR}/pkg/ace/bin/i686-pc-cygwin-gcc-default32
+	pushd bin/i686-pc-cygwin-gcc-default32/
+	cp -v gap.dll gap.exe gac sysinfo.gap \
 	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/
+	popd
+	sed -i -e \
+	    's|^gap_bin=.*$|gap_bin=/usr/share/gap4r6/bin/i686-pc-cygwin-gcc-default32|' \
+	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/gac
+	sed -i -e \
+	    's|^gap_bin=.*$|gap_bin=/usr/share/gap4r6/bin/i686-pc-cygwin-gcc-default32|' \
+	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/sysinfo.gap
 	cp -v pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe \
 	    ${D}${GAP_DIR}/pkg/xgap/bin/i686-pc-cygwin-gcc/
-	newbin bin/gap-default32.sh gap
-	newbin pkg/xgap/bin/xgap.sh xgap
+	cp -v pkg/ace/bin/i686-pc-cygwin-gcc-default32/ace.exe \
+	    ${D}${GAP_DIR}/pkg/ace/bin/i686-pc-cygwin-gcc-default32/
 	cd ${S}
-	cp -a doc etc grp lib pkg prim small trans tst ${D}${GAP_DIR}
+	cp -al doc etc grp lib pkg prim small trans tst ${D}${GAP_DIR}/
 }

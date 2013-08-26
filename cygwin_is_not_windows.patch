@@ -1,0 +1,151 @@
+--- origsrc/gap4r6/lib/system.g	2013-07-20 16:02:25.000000000 -0400
++++ src/gap4r6/lib/system.g	2013-08-24 11:51:22.485944400 -0400
+@@ -380,7 +380,7 @@ end );
+ ##  <#/GAPDoc>
+ ##
+ BIND_GLOBAL("ARCH_IS_WINDOWS",function()
+-  return POSITION_SUBSTRING (GAPInfo.Architecture, "cygwin", 0) <> fail;
++  return POSITION_SUBSTRING (GAPInfo.Architecture, "windows", 0) <> fail;
+ end);
+ 
+ #############################################################################
+--- origsrc/gap4r6/src/streams.c	2013-08-24 11:48:41.799753600 -0400
++++ src/gap4r6/src/streams.c	2013-08-24 11:54:22.383233900 -0400
+@@ -1957,9 +1957,6 @@ Obj FuncREAD_ALL_FILE (
+ 	SET_LEN_STRING(str, len);
+ 	syBuffers[bufno].bufstart += lstr;
+       }
+-#if SYS_IS_CYGWIN32
+- getmore:
+-#endif
+     while (ilim == -1 || len < ilim ) {
+       if ( len > 0 && !HasAvailableBytes(ifid))
+ 	break;
+@@ -1998,31 +1995,6 @@ Obj FuncREAD_ALL_FILE (
+ 
+     /* fix the length of <str>                                             */
+     len = GET_LEN_STRING(str);
+-#if SYS_IS_CYGWIN32
+-    /* line end hackery */
+-    {
+-      UInt i = 0,j = 0;
+-      while ( i < len )
+-	{
+-	  if (CHARS_STRING(str)[i] == '\r')
+-	    {
+-	      if (i < len -1 && CHARS_STRING(str)[i+1] == '\n')
+-		{
+-		  i++;
+-		  continue;
+-		}
+-	      else
+-		CHARS_STRING(str)[i] = '\n';
+-	    }
+-	  CHARS_STRING(str)[j++] = CHARS_STRING(str)[i++];
+-	}
+-      len = j;
+-      SET_LEN_STRING(str, len);
+-      if (ilim != -1 && len < ilim)
+-	goto getmore;
+-      
+-    }
+-#endif
+     ResizeBag( str, SIZEBAG_STRINGLEN(len) );
+ 
+     /* and return                                                          */
+--- origsrc/gap4r6/src/sysfiles.c	2013-08-24 11:48:43.151831000 -0400
++++ src/gap4r6/src/sysfiles.c	2013-08-24 12:00:49.080351700 -0400
+@@ -1654,19 +1654,6 @@ Int SyFseek (
+ */
+ #if HAVE_SGTTY_H || HAVE_TERMIO_H || HAVE_TERMIOS_H
+ 
+-/* In the cygwin environment it is not predictable if text files get the
+- * '\r' in their line ends filtered out *before* GAP sees them. This leads
+- * to problem with continuation of strings or integers over several lines in
+- * GAP input. Therefore we introduce a hack which removes such '\r's
+- * before '\n's on such a system. Add here if there are other systems with
+- * a similar problem.
+- */
+-
+-#if SYS_IS_CYGWIN32
+-#  define LINE_END_HACK 1
+-#endif
+-
+-
+ Int syGetchTerm (
+     Int                 fid )
+ {
+@@ -3728,12 +3715,7 @@ Char * SyTmpname ( void )
+ *f  SyTmpdir( <hint> )  . . . . . . . . . . . . . . . . . . . . using `mkdir'
+ */
+ 
+-#if SYS_IS_CYGWIN32
+-#define TMPDIR_BASE "/cygdrive/c/WINDOWS/Temp/"
+-#else
+ #define TMPDIR_BASE "/tmp/"
+-#endif
+-
+ 
+ #if HAVE_MKDTEMP
+ Char * SyTmpdir( const Char * hint )
+--- origsrc/gap4r6/src/system.c	2013-08-24 11:48:41.807754100 -0400
++++ src/gap4r6/src/system.c	2013-08-24 12:04:12.878008300 -0400
+@@ -1467,17 +1465,6 @@ void SySleep ( UInt secs )
+ void SyExit (
+     UInt                ret )
+ {
+-#if SYS_IS_CYGWIN32
+-  if (ret!=0) {
+-    Int c;
+-    fputs("gap: Press <Enter> to end program\n",stderr);
+-    do {
+-      c=SyGetch(1);   /* wait for the user to type <return> */
+-    } while (c!='\n' && c!=' ');
+-  }
+-
+-#endif
+-
+     exit( (int)ret );
+ }
+ 
+@@ -1558,12 +1545,6 @@ void SySetGapRootPath( const Char * stri
+         while ( *p && *p != ';' ) {
+             *q = *p++;
+ 
+-#if SYS_IS_CYGWIN32
+-            /* fix up for DOS */
+-            if (*q == '\\')
+-              *q = '/';
+-#endif
+-            
+             q++;
+         }
+         if ( q == SyGapRootPaths[n] ) {
+@@ -1842,18 +1842,12 @@ void InitSystem (
+ 
+     SySystemInitFile[0] = '\0';
+     strxcpy( SySystemInitFile, "lib/init.g", sizeof(SySystemInitFile) );
+-#if SYS_IS_CYGWIN32
+-    SySetGapRootPath( SyWindowsPath );
+-#else
+-
+ #ifdef SYS_DEFAULT_PATHS
+     SySetGapRootPath( SYS_DEFAULT_PATHS );
+ #else
+     SySetGapRootPath( "./" );
+ #endif
+ 
+-#endif
+-
+     /* save the original command line for export to GAP */
+     SyOriginalArgc = argc;
+     SyOriginalArgv = argv;
+@@ -1981,8 +1975,6 @@ void InitSystem (
+         strxcpy(DotGapPath, getenv("HOME"), sizeof(DotGapPath));
+ # if defined(SYS_IS_DARWIN) && SYS_IS_DARWIN
+         strxcat(DotGapPath, "/Library/Preferences/GAP;", sizeof(DotGapPath));
+-# elif defined(__CYGWIN__)
+-        strxcat(DotGapPath, "/_gap;", sizeof(DotGapPath));
+ # else
+         strxcat(DotGapPath, "/.gap;", sizeof(DotGapPath));
+ # endif

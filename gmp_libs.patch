@@ -1,11 +1,25 @@
 --- origsrc/gap4r6/configure.in	2013-07-20 16:02:01.000000000 -0400
-+++ src/gap4r6/configure.in	2013-08-19 18:37:30.796745400 -0400
-@@ -103,7 +103,7 @@ case "$with_gmp" in
-     ;;
-   system)
-     GMP_CFLAGS="-m${ABI}"
--    GMP_LIBS="-lgmp"
-+    GMP_LIBS="/usr/lib/libgmp.dll.a"
-     MAKE_GMP=""
-     ;;
++++ src/gap4r6/configure.in	2013-08-22 16:49:10.449338700 -0400
+@@ -109,9 +109,20 @@ case "$with_gmp" in
    *)
+     # user specified directory
+     GMP_HOME="$with_gmp"
+-	if test -d ${GMP_HOME}/include && test -f ${GMP_HOME}/lib/libgmp.a ; then
++    if test -d ${GMP_HOME}/include ; 
++    then
+       GMP_CFLAGS="-I${GMP_HOME}/include"
+-      GMP_LIBS="${GMP_HOME}/lib/libgmp.a"
++      if test -f ${GMP_HOME}/lib/libgmp.a ; then
++        GMP_LIBS="${GMP_HOME}/lib/libgmp.a"
++      elif test -f ${GMP_HOME}/lib/libgmp.so; then
++        GMP_LIBS="${GMP_HOME}/lib/libgmp.so"
++      elif test -f ${GMP_HOME}/lib/libgmp.dll.a; then
++        GMP_LIBS="${GMP_HOME}/lib/libgmp.dll.a"
++      elif test -f ${GMP_HOME}/lib/libgmp.dylib; then
++        GMP_LIBS="${GMP_HOME}/lib/libgmp.dylib"
++      else
++        AC_MSG_ERROR([Could not locate GMP in the specified location])
++      fi;
+     else
+       AC_MSG_ERROR([Could not locate GMP in the specified location])
+     fi;
