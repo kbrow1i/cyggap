@@ -1,7 +1,7 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=2
+RELEASE=3
 
 SRC_DIR="gap4r6"
 
@@ -41,6 +41,7 @@ PATCH_URI="
 	no_w95_exe.patch
 	no_xgap.patch
 	writeandcheck.patch
+	xgap_no_firefox.patch
 "
 gap_CONTENTS="
 	--exclude=usr/bin/xgap

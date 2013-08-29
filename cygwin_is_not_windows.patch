@@ -1,14 +1,55 @@
+--- origsrc/gap4r6/lib/helpview.gi	2013-07-20 16:02:02.000000000 -0400
++++ src/gap4r6/lib/helpview.gi	2013-08-28 09:47:51.383632500 -0400
+@@ -86,6 +86,22 @@ if ARCH_IS_WINDOWS() then
+   end
+   );
+ 
++elif ARCH_IS_CYGWIN() then
++  # html version on Cygwin
++  HELP_VIEWER_INFO.browser := rec(
++  type := "url",
++  show := function( url )
++    local plain_url, pos;
++    pos := POSITION_SUBSTRING (url, "\#", 0);
++    if pos = fail then
++      plain_url := url;
++    else
++      plain_url := url{[1..pos-1]};
++    fi;
++    Exec ( Concatenation( "cygstart ", plain_url ) );
++  end
++  );
++
+ elif ARCH_IS_MAC_OS_X() then
+   # html version using Mac OS X default browser
+   HELP_VIEWER_INFO.("mac default browser") := rec (
 --- origsrc/gap4r6/lib/system.g	2013-07-20 16:02:25.000000000 -0400
-+++ src/gap4r6/lib/system.g	2013-08-24 11:51:22.485944400 -0400
-@@ -380,7 +380,7 @@ end );
++++ src/gap4r6/lib/system.g	2013-08-29 11:27:31.804340700 -0400
+@@ -380,6 +380,24 @@ end );
  ##  <#/GAPDoc>
  ##
  BIND_GLOBAL("ARCH_IS_WINDOWS",function()
--  return POSITION_SUBSTRING (GAPInfo.Architecture, "cygwin", 0) <> fail;
 +  return POSITION_SUBSTRING (GAPInfo.Architecture, "windows", 0) <> fail;
++end);
++
++#############################################################################
++##
++#F  ARCH_IS_CYGWIN()
++##
++##  <#GAPDoc Label="ARCH_IS_CYGWIN">
++##  <ManSection>
++##  <Func Name="ARCH_IS_CYGWIN" Arg=''/>
++##
++##  <Description>
++##  tests whether &GAP; is running on a Cygwin system.
++##  </Description>
++##  </ManSection>
++##  <#/GAPDoc>
++##
++BIND_GLOBAL("ARCH_IS_CYGWIN",function()
+   return POSITION_SUBSTRING (GAPInfo.Architecture, "cygwin", 0) <> fail;
  end);
  
- #############################################################################
 --- origsrc/gap4r6/src/streams.c	2013-08-24 11:48:41.799753600 -0400
 +++ src/gap4r6/src/streams.c	2013-08-24 11:54:22.383233900 -0400
 @@ -1957,9 +1957,6 @@ Obj FuncREAD_ALL_FILE (
