@@ -1,18 +1,20 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=4
+RELEASE=5
 
 SRC_DIR="gap4r6"
 
 HOMEPAGE="http://www.gap-system.org/"
 CATEGORY="Math"
-PKG_NAMES="${PN} x${PN} ${PN}-ace ${PN}-itc"
+PKG_NAMES="${PN} x${PN} ${PN}-ace ${PN}-itc ${PN}-suggested ${PN}-other"
 
 gap_SUMMARY="A system for computational discrete algebra"
 xgap_SUMMARY="A graphical user interface for GAP"
 gap_ace_SUMMARY="The ACE package for GAP"
 gap_itc_SUMMARY="The ITC package for GAP"
+gap_suggested_SUMMARY="Suggested GAP packages (loaded by default)"
+gap_other_SUMMARY="All GAP packages not in other Cygwin packages"
 
 DESCRIPTION="GAP is a system for computational discrete algebra, with particular
 emphasis on Computational Group Theory.  GAP provides a programming
@@ -28,8 +30,8 @@ xgap_DESCRIPTION="The XGAP package provides a graphical user interface for GAP"
 SRC_URI="
 	ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2
 	http://www.gap-system.org/Download/InstPackages.sh
+	update-gap-workspace.sh
 "
-	# update-gap-workspace
 
 PATCH_URI="
 	build_gap_dll.patch
@@ -52,28 +54,51 @@ PATCH_URI="
 GAP_DIR="usr/share/${SRC_DIR}"
 # GAParch="i686-pc-cygwin-gcc-default32"
 
+# FIXME: Make variables SUGGESTED_PACKAGES and NEEDED_DIRECTORIES and
+# use them: e.g., for p in ${NEEDED_DIRECTORIES} do gap_CONTENTS+=....
+# For src_install, first copy over whole source pkg directory.  Then
+# additionally copy the bin directories for ace and xgap.
+
+NEEDED_DIRECTORIES="doc etc grp lib prim small trans tst"
+
+SUGGESTED_PACKAGES="aclib Alnuth-3.0.0 autpgrp crisp cryst crystcat
+ctbllib factint fga irredsol laguna polenta-1.3.1 polycyclic-2.11
+radiroot resclasses sophus spinsym tomlib"
+
 gap_CONTENTS="
-	--exclude=usr/bin/xgap
-	--exclude=${GAP_DIR}/pkg/ace
-	--exclude=${GAP_DIR}/pkg/itc
-	--exclude=${GAP_DIR}/pkg/xgap
 	usr/bin/gap
-	${GAP_DIR}"
+	usr/bin/update-gap-workspace
+	${GAP_DIR}/bin
+"
+
+for d in ${NEEDED_DIRECTORIES}
+do
+    gap_CONTENTS+=" ${GAP_DIR}/${d}"
+done
+
 xgap_CONTENTS="usr/bin/xgap ${GAP_DIR}/pkg/xgap"
 gap_ace_CONTENTS="${GAP_DIR}/pkg/ace"
 gap_itc_CONTENTS="${GAP_DIR}/pkg/itc"
+gap_suggested_CONTENTS=""
 
-	# usr/bin/update-gap-workspace
+for p in ${SUGGESTED_PACKAGES}
+do
+    gap_suggested_CONTENTS+=" ${GAP_DIR}/pkg/${p}"
+done
 
-# gap_devel_CONTENTS="
-# 	${GAP_DIR}/bin/${GAParch}/gac
-# 	${GAP_DIR}/bin/${GAParch}/gap.dll
-# 	${GAP_DIR}/bin/${GAParch}/sysinfo.gap
-# "
+gap_other_CONTENTS=""
+
+for p in ${SUGGESTED_PACKAGES} GAPDoc-1.5.1 ace itc xgap
+do
+    gap_other_CONTENTS+=" --exclude=${GAP_DIR}/pkg/${p}"
+done
+gap_other_CONTENTS+=" ${GAP_DIR}/pkg"
 
 xgap_REQUIRES="gap"
 gap_ace_REQUIRES="gap"
 gap_itc_REQUIRES="gap"
+gap_suggested_REQUIRES="gap"
+gap_other_REQUIRES="gap"
 
 DIFF_EXCLUDES="configure.out config.hin configure Makegap.in InstPackages.sh"
 
@@ -106,49 +131,33 @@ src_compile() {
 }
 
 src_install() {
-	# dobin ${S}/update-gap-workspace
+	cd ${S}
+	source ${B}/sysinfo.gap	# For GAParch
+	dodir /${GAP_DIR}
+	cp -al pkg ${D}/${GAP_DIR}
+	chmod 755 InstPackages.sh
+	cp -v InstPackages.sh ${D}/${GAP_DIR}/pkg
+	cp -al ${NEEDED_DIRECTORIES} ${D}/${GAP_DIR}
 	cd ${B}
-	source sysinfo.gap	# For GAParch
+	newbin update-gap-workspace.sh update-gap-workspace
 	newbin bin/gap.sh gap
 	sed -i -e "s|^GAP_DIR=.*|GAP_DIR=/${GAP_DIR}|" \
 	    ${D}/usr/bin/gap
 	newbin pkg/xgap/bin/xgap.sh xgap
 	sed -i -e "s|^GAP_DIR=.*|GAP_DIR=/${GAP_DIR}|" \
 	    ${D}/usr/bin/xgap
+	cp  sysinfo.gap ${D}/${GAP_DIR}
+	pushd bin/${GAParch}
 	dodir /${GAP_DIR}/bin/${GAParch}
-	dodir /${GAP_DIR}/pkg/ace
-	dodir /${GAP_DIR}/pkg/xgap
-	dodir /${GAP_DIR}/pkg/itc
-	cp  sysinfo.gap ${D}/${GAP_DIR}/
-# 	pushd bin/${GAParch}
-# 	cp -v gap.dll gap.exe gac sysinfo.gap \
-# 	    ${D}/${GAP_DIR}/bin/${GAParch}
-# 	popd
-# 	sed -i -e \
-# 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
-# 	    ${D}/${GAP_DIR}/bin/${GAParch}/gac
-# 	sed -i -e \
-# 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
-# 	    ${D}/${GAP_DIR}/bin/${GAParch}/sysinfo.gap
-	cp  bin/${GAParch}/gap.exe ${D}/${GAP_DIR}/bin/${GAParch}
+	cp -v gap.dll gap.exe gac sysinfo.gap \
+	    ${D}/${GAP_DIR}/bin/${GAParch}
+	popd
+	sed -i -e \
+	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
+	    ${D}/${GAP_DIR}/bin/${GAParch}/gac
+	sed -i -e \
+	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
+	    ${D}/${GAP_DIR}/bin/${GAParch}/sysinfo.gap
 	cp -a pkg/ace/bin ${D}/${GAP_DIR}/pkg/ace
 	cp -a pkg/xgap/bin ${D}/${GAP_DIR}/pkg/xgap
-	cd ${S}/pkg/ace
-	cp -a doc examples gap htm res-examples tst *.g \
-	    ${D}/${GAP_DIR}/pkg/ace
-	cd ../itc
-	cp -a doc examples gap htm *.g ${D}/${GAP_DIR}/pkg/itc
-	cd ../xgap
-	cp -a doc examples htm lib *.g ${D}/${GAP_DIR}/pkg/xgap
-	cd ${S}
-	chmod 755 InstPackages.sh
-	cp -al doc etc grp lib prim small trans tst InstPackages.sh \
-	    ${D}/${GAP_DIR}
-	for p in ${NEEDED_PACKAGES}
-	do
-	    cp -al pkg/${p} ${D}/${GAP_DIR}/pkg
-	done
 }
-
-# Todo: Ship only gapdoc as a needed package.  Make gap-suggested and
-# gap-other.  So all packages are available.
