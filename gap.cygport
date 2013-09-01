@@ -1,22 +1,26 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=3
+RELEASE=4
 
 SRC_DIR="gap4r6"
 
 HOMEPAGE="http://www.gap-system.org/"
 CATEGORY="Math"
-PKG_NAMES="gap xgap"
+PKG_NAMES="${PN} x${PN} ${PN}-ace ${PN}-itc"
 
 gap_SUMMARY="A system for computational discrete algebra"
 xgap_SUMMARY="A graphical user interface for GAP"
+gap_ace_SUMMARY="The ACE package for GAP"
+gap_itc_SUMMARY="The ITC package for GAP"
 
-gap_DESCRIPTION="GAP is a system for computational discrete algebra, with particular
+DESCRIPTION="GAP is a system for computational discrete algebra, with particular
 emphasis on Computational Group Theory.  GAP provides a programming
 language, a library of thousands of functions implementing algebraic
 algorithms written in the GAP language, and large data libraries of
-algebraic objects."
+algebraic objects.  GAP is used in research and teaching for studying
+groups and their representations, rings, vector spaces, algebras,
+combinatorial structures, and more."
 
 xgap_DESCRIPTION="The XGAP package provides a graphical user interface for GAP"
 
@@ -25,6 +29,7 @@ SRC_URI="
 	ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2
 	http://www.gap-system.org/Download/InstPackages.sh
 "
+	# update-gap-workspace
 
 PATCH_URI="
 	build_gap_dll.patch
@@ -43,17 +48,38 @@ PATCH_URI="
 	writeandcheck.patch
 	xgap_no_firefox.patch
 "
+
+GAP_DIR="usr/share/${SRC_DIR}"
+# GAParch="i686-pc-cygwin-gcc-default32"
+
 gap_CONTENTS="
 	--exclude=usr/bin/xgap
-	--exclude=usr/share/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe
-	usr/bin/
-	usr/share"
+	--exclude=${GAP_DIR}/pkg/ace
+	--exclude=${GAP_DIR}/pkg/itc
+	--exclude=${GAP_DIR}/pkg/xgap
+	usr/bin/gap
+	${GAP_DIR}"
+xgap_CONTENTS="usr/bin/xgap ${GAP_DIR}/pkg/xgap"
+gap_ace_CONTENTS="${GAP_DIR}/pkg/ace"
+gap_itc_CONTENTS="${GAP_DIR}/pkg/itc"
 
-xgap_CONTENTS="
-	usr/bin/xgap
-	usr/share/gap4r6/pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe"
+	# usr/bin/update-gap-workspace
+
+# gap_devel_CONTENTS="
+# 	${GAP_DIR}/bin/${GAParch}/gac
+# 	${GAP_DIR}/bin/${GAParch}/gap.dll
+# 	${GAP_DIR}/bin/${GAParch}/sysinfo.gap
+# "
+
+xgap_REQUIRES="gap"
+gap_ace_REQUIRES="gap"
+gap_itc_REQUIRES="gap"
 
 DIFF_EXCLUDES="configure.out config.hin configure Makegap.in InstPackages.sh"
+
+NEEDED_PACKAGES="aclib Alnuth-3.0.0 autpgrp crisp cryst crystcat
+	ctbllib factint fga GAPDoc-1.5.1 irredsol laguna polenta-1.3.1
+	polycyclic-2.11 radiroot resclasses sophus spinsym tomlib"
 
 src_compile() {
 	cd ${S}
@@ -67,26 +93,6 @@ src_compile() {
 	cd cnf
 	touch configure.in
 	make
-	cd ../..		# Now back in pkg
-	# cd ../../fr-*
-	# cd cnf
-	# autoreconf -f -i -v -I m4
-	# cp -v configure ../
-	# cd ../..		# Now back in pkg
-	# DIRS="cvec io linboxing orb"
-	# for d in ${DIRS}
-	# do
-	#     pushd ${d}
-	#     cygautoreconf -I m4
-	#     popd
-	# done
-	# DIRS="grape/nauty22 guava-3.12/src/leon pargap nq-2.4 qaos simpcomp"
-	# for d in ${DIRS}
-	# do
-	#     pushd ${d}
-	#     cygautoreconf
-	#     popd
-	# done
 	lndirs
 	cd ${B}
 	./configure --with-gmp=/usr
@@ -97,39 +103,52 @@ src_compile() {
 	cd ../ace
 	./configure
 	make
-	cd ..
-	cp ../InstPackages.sh .
-	chmod 755 InstPackages.sh
 }
 
 src_install() {
+	# dobin ${S}/update-gap-workspace
 	cd ${B}
+	source sysinfo.gap	# For GAParch
 	newbin bin/gap.sh gap
-	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR=/usr/share/gap4r6|' \
+	sed -i -e "s|^GAP_DIR=.*|GAP_DIR=/${GAP_DIR}|" \
 	    ${D}/usr/bin/gap
 	newbin pkg/xgap/bin/xgap.sh xgap
-	sed -i -e 's|^GAP_DIR=.*$|GAP_DIR=/usr/share/gap4r6|' \
+	sed -i -e "s|^GAP_DIR=.*|GAP_DIR=/${GAP_DIR}|" \
 	    ${D}/usr/bin/xgap
-	GAP_DIR=/usr/share/gap4r6
-	dodir ${GAP_DIR}
-	cp -v sysinfo.gap ${D}${GAP_DIR}/
-	dodir ${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32
-	dodir ${GAP_DIR}/pkg/xgap/bin/i686-pc-cygwin-gcc
-	dodir ${GAP_DIR}/pkg/ace/bin/i686-pc-cygwin-gcc-default32
-	pushd bin/i686-pc-cygwin-gcc-default32/
-	cp -v gap.dll gap.exe gac sysinfo.gap \
-	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/
-	popd
-	sed -i -e \
-	    's|^gap_bin=.*$|gap_bin=/usr/share/gap4r6/bin/i686-pc-cygwin-gcc-default32|' \
-	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/gac
-	sed -i -e \
-	    's|^gap_bin=.*$|gap_bin=/usr/share/gap4r6/bin/i686-pc-cygwin-gcc-default32|' \
-	    ${D}${GAP_DIR}/bin/i686-pc-cygwin-gcc-default32/sysinfo.gap
-	cp -v pkg/xgap/bin/i686-pc-cygwin-gcc/xgap.exe \
-	    ${D}${GAP_DIR}/pkg/xgap/bin/i686-pc-cygwin-gcc/
-	cp -v pkg/ace/bin/i686-pc-cygwin-gcc-default32/ace.exe \
-	    ${D}${GAP_DIR}/pkg/ace/bin/i686-pc-cygwin-gcc-default32/
+	dodir /${GAP_DIR}/bin/${GAParch}
+	dodir /${GAP_DIR}/pkg/ace
+	dodir /${GAP_DIR}/pkg/xgap
+	dodir /${GAP_DIR}/pkg/itc
+	cp  sysinfo.gap ${D}/${GAP_DIR}/
+# 	pushd bin/${GAParch}
+# 	cp -v gap.dll gap.exe gac sysinfo.gap \
+# 	    ${D}/${GAP_DIR}/bin/${GAParch}
+# 	popd
+# 	sed -i -e \
+# 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
+# 	    ${D}/${GAP_DIR}/bin/${GAParch}/gac
+# 	sed -i -e \
+# 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
+# 	    ${D}/${GAP_DIR}/bin/${GAParch}/sysinfo.gap
+	cp  bin/${GAParch}/gap.exe ${D}/${GAP_DIR}/bin/${GAParch}
+	cp -a pkg/ace/bin ${D}/${GAP_DIR}/pkg/ace
+	cp -a pkg/xgap/bin ${D}/${GAP_DIR}/pkg/xgap
+	cd ${S}/pkg/ace
+	cp -a doc examples gap htm res-examples tst *.g \
+	    ${D}/${GAP_DIR}/pkg/ace
+	cd ../itc
+	cp -a doc examples gap htm *.g ${D}/${GAP_DIR}/pkg/itc
+	cd ../xgap
+	cp -a doc examples htm lib *.g ${D}/${GAP_DIR}/pkg/xgap
 	cd ${S}
-	cp -al doc etc grp lib pkg prim small trans tst ${D}${GAP_DIR}/
+	chmod 755 InstPackages.sh
+	cp -al doc etc grp lib prim small trans tst InstPackages.sh \
+	    ${D}/${GAP_DIR}
+	for p in ${NEEDED_PACKAGES}
+	do
+	    cp -al pkg/${p} ${D}/${GAP_DIR}/pkg
+	done
 }
+
+# Todo: Ship only gapdoc as a needed package.  Make gap-suggested and
+# gap-other.  So all packages are available.
