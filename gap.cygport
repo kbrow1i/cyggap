@@ -1,20 +1,29 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=5
+RELEASE=7
 
 SRC_DIR="gap4r6"
 
 HOMEPAGE="http://www.gap-system.org/"
 CATEGORY="Math"
-PKG_NAMES="${PN} x${PN} ${PN}-ace ${PN}-itc ${PN}-suggested ${PN}-other"
+PKG_NAMES="${PN}
+	x${PN}
+	${PN}-ace
+	${PN}-itc
+	${PN}-kbmag
+	${PN}-nq
+	${PN}-other
+	${PN}-suggested"
 
 gap_SUMMARY="A system for computational discrete algebra"
-xgap_SUMMARY="A graphical user interface for GAP"
 gap_ace_SUMMARY="The ACE package for GAP"
 gap_itc_SUMMARY="The ITC package for GAP"
-gap_suggested_SUMMARY="Suggested GAP packages (loaded by default)"
+gap_kbmag_SUMMARY="The KBMAG package for GAP"
+gap_nq_SUMMARY="The NQ package for GAP"
 gap_other_SUMMARY="All GAP packages not in other Cygwin packages"
+gap_suggested_SUMMARY="Suggested GAP packages (loaded by default)"
+xgap_SUMMARY="A graphical user interface for GAP"
 
 DESCRIPTION="GAP is a system for computational discrete algebra, with particular
 emphasis on Computational Group Theory.  GAP provides a programming
@@ -52,12 +61,6 @@ PATCH_URI="
 "
 
 GAP_DIR="usr/share/${SRC_DIR}"
-# GAParch="i686-pc-cygwin-gcc-default32"
-
-# FIXME: Make variables SUGGESTED_PACKAGES and NEEDED_DIRECTORIES and
-# use them: e.g., for p in ${NEEDED_DIRECTORIES} do gap_CONTENTS+=....
-# For src_install, first copy over whole source pkg directory.  Then
-# additionally copy the bin directories for ace and xgap.
 
 NEEDED_DIRECTORIES="doc etc grp lib prim small trans tst"
 
@@ -68,7 +71,10 @@ radiroot resclasses sophus spinsym tomlib"
 gap_CONTENTS="
 	usr/bin/gap
 	usr/bin/update-gap-workspace
+	${GAP_DIR}/sysinfo.gap
 	${GAP_DIR}/bin
+	${GAP_DIR}/pkg/GAPDoc-1.5.1
+	${GAP_DIR}/pkg/README.*
 "
 
 for d in ${NEEDED_DIRECTORIES}
@@ -79,6 +85,8 @@ done
 xgap_CONTENTS="usr/bin/xgap ${GAP_DIR}/pkg/xgap"
 gap_ace_CONTENTS="${GAP_DIR}/pkg/ace"
 gap_itc_CONTENTS="${GAP_DIR}/pkg/itc"
+gap_kbmag_CONTENTS="${GAP_DIR}/pkg/kbmag"
+gap_nq_CONTENTS="usr/bin/nq ${GAP_DIR}/pkg/nq-2.4"
 gap_suggested_CONTENTS=""
 
 for p in ${SUGGESTED_PACKAGES}
@@ -86,9 +94,9 @@ do
     gap_suggested_CONTENTS+=" ${GAP_DIR}/pkg/${p}"
 done
 
-gap_other_CONTENTS=""
+gap_other_CONTENTS="--exclude=${GAP_DIR}/pkg/README.*"
 
-for p in ${SUGGESTED_PACKAGES} GAPDoc-1.5.1 ace itc xgap
+for p in ${SUGGESTED_PACKAGES} GAPDoc-1.5.1 ace itc kbmag nq-2.4 xgap
 do
     gap_other_CONTENTS+=" --exclude=${GAP_DIR}/pkg/${p}"
 done
@@ -97,14 +105,12 @@ gap_other_CONTENTS+=" ${GAP_DIR}/pkg"
 xgap_REQUIRES="gap"
 gap_ace_REQUIRES="gap"
 gap_itc_REQUIRES="gap"
-gap_suggested_REQUIRES="gap"
+gap_kbmag_REQUIRES="gap"
+gap_nq_REQUIRES="gap gap-suggested" # for polycyclic
 gap_other_REQUIRES="gap"
+gap_suggested_REQUIRES="gap"
 
 DIFF_EXCLUDES="configure.out config.hin configure Makegap.in InstPackages.sh"
-
-NEEDED_PACKAGES="aclib Alnuth-3.0.0 autpgrp crisp cryst crystcat
-	ctbllib factint fga GAPDoc-1.5.1 irredsol laguna polenta-1.3.1
-	polycyclic-2.11 radiroot resclasses sophus spinsym tomlib"
 
 src_compile() {
 	cd ${S}
@@ -128,6 +134,13 @@ src_compile() {
 	cd ../ace
 	./configure
 	make
+	cd ../kbmag
+	./configure
+	make
+	cd ../nq-*
+	autoreconf
+	./configure
+	make
 }
 
 src_install() {
@@ -135,8 +148,8 @@ src_install() {
 	source ${B}/sysinfo.gap	# For GAParch
 	dodir /${GAP_DIR}
 	cp -al pkg ${D}/${GAP_DIR}
-	chmod 755 InstPackages.sh
-	cp -v InstPackages.sh ${D}/${GAP_DIR}/pkg
+	exeinto /${GAP_DIR}/pkg
+	doexe InstPackages.sh
 	cp -al ${NEEDED_DIRECTORIES} ${D}/${GAP_DIR}
 	cd ${B}
 	newbin update-gap-workspace.sh update-gap-workspace
@@ -146,11 +159,13 @@ src_install() {
 	newbin pkg/xgap/bin/xgap.sh xgap
 	sed -i -e "s|^GAP_DIR=.*|GAP_DIR=/${GAP_DIR}|" \
 	    ${D}/usr/bin/xgap
-	cp  sysinfo.gap ${D}/${GAP_DIR}
+	insinto /${GAP_DIR}
+	doins sysinfo.gap
 	pushd bin/${GAParch}
-	dodir /${GAP_DIR}/bin/${GAParch}
-	cp -v gap.dll gap.exe gac sysinfo.gap \
-	    ${D}/${GAP_DIR}/bin/${GAParch}
+	exeinto /${GAP_DIR}/bin/${GAParch}
+	doexe gap.dll gap.exe gac
+	insinto /${GAP_DIR}/bin/${GAParch}
+	doins sysinfo.gap
 	popd
 	sed -i -e \
 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
@@ -159,5 +174,8 @@ src_install() {
 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
 	    ${D}/${GAP_DIR}/bin/${GAParch}/sysinfo.gap
 	cp -a pkg/ace/bin ${D}/${GAP_DIR}/pkg/ace
+	cp -a pkg/kbmag/bin ${D}/${GAP_DIR}/pkg/kbmag
+	cp -a pkg/nq-*/bin ${D}/${GAP_DIR}/pkg/nq-2.4
+	dosym /${GAP_DIR}/pkg/nq-2.4/bin/${GAParch}/nq.exe /usr/bin/nq
 	cp -a pkg/xgap/bin ${D}/${GAP_DIR}/pkg/xgap
 }
