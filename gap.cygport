@@ -1,7 +1,7 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=7
+RELEASE=8
 
 SRC_DIR="gap4r6"
 
@@ -10,6 +10,7 @@ CATEGORY="Math"
 PKG_NAMES="${PN}
 	x${PN}
 	${PN}-ace
+	${PN}-anupq
 	${PN}-itc
 	${PN}-kbmag
 	${PN}-nq
@@ -18,6 +19,7 @@ PKG_NAMES="${PN}
 
 gap_SUMMARY="A system for computational discrete algebra"
 gap_ace_SUMMARY="The ACE package for GAP"
+gap_anupq_SUMMARY="The ANUPQ package for GAP"
 gap_itc_SUMMARY="The ITC package for GAP"
 gap_kbmag_SUMMARY="The KBMAG package for GAP"
 gap_nq_SUMMARY="The NQ package for GAP"
@@ -50,12 +52,9 @@ PATCH_URI="
 	force_autoconf.patch
 	gmp_libs.patch
 	ncursesw.patch
-	no_ace.patch
 	no_cygwin32.patch
 	no_cygwin_specific_junk.patch
-	no_float.patch
 	no_w95_exe.patch
-	no_xgap.patch
 	writeandcheck.patch
 	xgap_no_firefox.patch
 "
@@ -84,6 +83,7 @@ done
 
 xgap_CONTENTS="usr/bin/xgap ${GAP_DIR}/pkg/xgap"
 gap_ace_CONTENTS="${GAP_DIR}/pkg/ace"
+gap_anupq_CONTENTS="${GAP_DIR}/pkg/anupq"
 gap_itc_CONTENTS="${GAP_DIR}/pkg/itc"
 gap_kbmag_CONTENTS="${GAP_DIR}/pkg/kbmag"
 gap_nq_CONTENTS="usr/bin/nq ${GAP_DIR}/pkg/nq-2.4"
@@ -96,7 +96,7 @@ done
 
 gap_other_CONTENTS="--exclude=${GAP_DIR}/pkg/README.*"
 
-for p in ${SUGGESTED_PACKAGES} GAPDoc-1.5.1 ace itc kbmag nq-2.4 xgap
+for p in ${SUGGESTED_PACKAGES} GAPDoc-1.5.1 ace anupq itc kbmag nq-2.4 xgap
 do
     gap_other_CONTENTS+=" --exclude=${GAP_DIR}/pkg/${p}"
 done
@@ -104,6 +104,7 @@ gap_other_CONTENTS+=" ${GAP_DIR}/pkg"
 
 xgap_REQUIRES="gap"
 gap_ace_REQUIRES="gap"
+gap_anupq_REQUIRES="gap gap-suggested" # for autpgrp
 gap_itc_REQUIRES="gap"
 gap_kbmag_REQUIRES="gap"
 gap_nq_REQUIRES="gap gap-suggested" # for polycyclic
@@ -141,6 +142,9 @@ src_compile() {
 	autoreconf
 	./configure
 	make
+	cd ../anupq
+	./configure
+	make iX86-pc-cygwin-gcc-gmp
 }
 
 src_install() {
@@ -174,6 +178,7 @@ src_install() {
 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
 	    ${D}/${GAP_DIR}/bin/${GAParch}/sysinfo.gap
 	cp -a pkg/ace/bin ${D}/${GAP_DIR}/pkg/ace
+	cp -a pkg/anupq/bin ${D}/${GAP_DIR}/pkg/anupq
 	cp -a pkg/kbmag/bin ${D}/${GAP_DIR}/pkg/kbmag
 	cp -a pkg/nq-*/bin ${D}/${GAP_DIR}/pkg/nq-2.4
 	dosym /${GAP_DIR}/pkg/nq-2.4/bin/${GAParch}/nq.exe /usr/bin/nq

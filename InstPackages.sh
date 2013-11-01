@@ -119,11 +119,11 @@ cd io
 make
 cd ..
 
-# cd kbmag
-# make clean
-# ./configure ../..
-# make COPTS="-O2 -g"
-# cd ..
+cd kbmag
+make clean
+./configure ../..
+make COPTS="-O2 -g"
+cd ..
 
 #  Easy, if prerequisites are installed. You may get GNU GMP
 #  (http://gmplib.org/) and BLAS (http://www.netlib.org/blas/) 
@@ -136,12 +136,12 @@ cd ..
 
 # nq needs GMP. It may be able to find GMP supplied with GAP 
 # automatically. Otherwise, adjust the argument to 'make' accordingly.
-# cd nq-*
-# ./configure
+cd nq-*
+./configure
 # change paths to your GMP installation
-#make GNU_MP_LIB=../../Gmplib/lib GNU_MP_INC=../../Gmplib/include
-# make
-# cd ..
+# make GNU_MP_LIB=../../Gmplib/lib GNU_MP_INC=../../Gmplib/include
+make
+cd ..
 
 cd orb
 ./configure 
