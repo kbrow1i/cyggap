@@ -1,7 +1,7 @@
 NAME="gap"
 VERSION=4.6.5
 LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=8
+RELEASE=9
 
 SRC_DIR="gap4r6"
 
@@ -183,4 +183,8 @@ src_install() {
 	cp -a pkg/nq-*/bin ${D}/${GAP_DIR}/pkg/nq-2.4
 	dosym /${GAP_DIR}/pkg/nq-2.4/bin/${GAParch}/nq.exe /usr/bin/nq
 	cp -a pkg/xgap/bin ${D}/${GAP_DIR}/pkg/xgap
+	cd ${D}/${GAP_DIR}/pkg/xgap/bin
+	rm xgap.sh
+	cd *-cygwin-*
+	rm config* *.o Makefile
 }
