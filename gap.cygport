@@ -1,30 +1,33 @@
 NAME="gap"
-VERSION=4.6.5
-LONG_VERSION=4r6p5_2013_07_20-20_02
-RELEASE=9
+VERSION=4.7.5
+LONG_VERSION=4r7p5_2014_05_24-20_02
+RELEASE=1
 
-SRC_DIR="gap4r6"
+SRC_DIR="gap4r7"
 
 HOMEPAGE="http://www.gap-system.org/"
 CATEGORY="Math"
-PKG_NAMES="${PN}
-	x${PN}
-	${PN}-ace
-	${PN}-anupq
-	${PN}-itc
-	${PN}-kbmag
-	${PN}-nq
-	${PN}-other
-	${PN}-suggested"
+
+PKG_DIRS="4ti2Interface Alnuth-3.0.0 AutoDoc Browse Convex
+ExamplesForHomalg GAPDoc-1.5.1 Gauss GaussForHomalg GradedModules
+GradedRingForHomalg HAPcryst Hap1.10 HomalgToCAS IO_ForHomalg
+LocalizeRingForHomalg MatricesForHomalg Modules PolymakeInterface
+RingsForHomalg SCO SymbCompCC-1.2 ToolsForHomalg ToricVarieties ace
+aclib anupq-3.1.1 atlasrep automata automgrp autpgrp carat circle
+cohomolo congruence corelg crime crisp cryst crystcat ctbllib cubefree
+cvec-2.5.1 design edim example factint fga float-0.5.18 format forms
+fplsa fr-2.1.1 fwtree gbnp genss-1.6.1 gpd-1.22 grape grpconst guarana
+guava-3.12 happrime hecke homalg idrel-2.14 intpic io-4.3.1 irredsol
+itc kan-1.07 kbmag laguna liealgdb liepring liering linboxing loops
+mapclass modisom nilmat nq-2.5.1 numericalsgps openmath orb-4.7.1
+pargap permut polenta-1.3.2 polycyclic-2.11 polymaking qaos quagroup
+radiroot rcwa rds recog-1.2.2 recogbase-1.2.2 repsn resclasses scscp
+semigroups-2.0 sgpviz simpcomp singular sla smallsemi-0.6.8 sonata
+sophus spinsym tomlib toric1.8 unipot-1.2 unitlib wedderga xmod-2.26"
+
+PKG_NAMES="${PN} x${PN}"
 
 gap_SUMMARY="A system for computational discrete algebra"
-gap_ace_SUMMARY="The ACE package for GAP"
-gap_anupq_SUMMARY="The ANUPQ package for GAP"
-gap_itc_SUMMARY="The ITC package for GAP"
-gap_kbmag_SUMMARY="The KBMAG package for GAP"
-gap_nq_SUMMARY="The NQ package for GAP"
-gap_other_SUMMARY="All GAP packages not in other Cygwin packages"
-gap_suggested_SUMMARY="Suggested GAP packages (loaded by default)"
 xgap_SUMMARY="A graphical user interface for GAP"
 
 DESCRIPTION="GAP is a system for computational discrete algebra, with particular
@@ -35,44 +38,17 @@ algebraic objects.  GAP is used in research and teaching for studying
 groups and their representations, rings, vector spaces, algebras,
 combinatorial structures, and more."
 
-xgap_DESCRIPTION="The XGAP package provides a graphical user interface for GAP"
-
-
-SRC_URI="
-	ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2
-	http://www.gap-system.org/Download/InstPackages.sh
-	update-gap-workspace.sh
-"
-
-PATCH_URI="
-	build_gap_dll.patch
-	cflags.patch
-	cygwin_is_not_windows.patch
-	fix_shebang.patch
-	force_autoconf.patch
-	gmp_libs.patch
-	ncursesw.patch
-	no_cygwin32.patch
-	no_cygwin_specific_junk.patch
-	no_w95_exe.patch
-	writeandcheck.patch
-	xgap_no_firefox.patch
-"
-
 GAP_DIR="usr/share/${SRC_DIR}"
 
 NEEDED_DIRECTORIES="doc etc grp lib prim small trans tst"
 
-SUGGESTED_PACKAGES="aclib Alnuth-3.0.0 autpgrp crisp cryst crystcat
-ctbllib factint fga irredsol laguna polenta-1.3.1 polycyclic-2.11
-radiroot resclasses sophus spinsym tomlib"
+xgap_DESCRIPTION="The XGAP package provides a graphical user interface for GAP"
 
 gap_CONTENTS="
 	usr/bin/gap
 	usr/bin/update-gap-workspace
 	${GAP_DIR}/sysinfo.gap
 	${GAP_DIR}/bin
-	${GAP_DIR}/pkg/GAPDoc-1.5.1
 	${GAP_DIR}/pkg/README.*
 "
 
@@ -82,78 +58,169 @@ do
 done
 
 xgap_CONTENTS="usr/bin/xgap ${GAP_DIR}/pkg/xgap"
-gap_ace_CONTENTS="${GAP_DIR}/pkg/ace"
-gap_anupq_CONTENTS="${GAP_DIR}/pkg/anupq"
-gap_itc_CONTENTS="${GAP_DIR}/pkg/itc"
-gap_kbmag_CONTENTS="${GAP_DIR}/pkg/kbmag"
-gap_nq_CONTENTS="usr/bin/nq ${GAP_DIR}/pkg/nq-2.4"
-gap_suggested_CONTENTS=""
 
-for p in ${SUGGESTED_PACKAGES}
-do
-    gap_suggested_CONTENTS+=" ${GAP_DIR}/pkg/${p}"
-done
-
-gap_other_CONTENTS="--exclude=${GAP_DIR}/pkg/README.*"
-
-for p in ${SUGGESTED_PACKAGES} GAPDoc-1.5.1 ace anupq itc kbmag nq-2.4 xgap
-do
-    gap_other_CONTENTS+=" --exclude=${GAP_DIR}/pkg/${p}"
-done
-gap_other_CONTENTS+=" ${GAP_DIR}/pkg"
-
+gap_REQUIRES="gap-GAPDoc"
 xgap_REQUIRES="gap"
-gap_ace_REQUIRES="gap"
-gap_anupq_REQUIRES="gap gap-suggested" # for autpgrp
-gap_itc_REQUIRES="gap"
-gap_kbmag_REQUIRES="gap"
-gap_nq_REQUIRES="gap gap-suggested" # for polycyclic
-gap_other_REQUIRES="gap"
-gap_suggested_REQUIRES="gap"
+
+for d in ${PKG_DIRS}
+do				# Strip version number.
+    case ${d} in
+	*-*) p=${d%%-*}
+	     ;;
+	[0-9]*) p=${d}
+		;;
+	*) p=${d%%[0-9]*}
+	     ;;
+    esac
+    PKG_NAMES+=" ${PN}-${p}"
+    eval "${PN}_${p}_SUMMARY=The\ ${p}\ package\ for\ GAP"
+    eval "${PN}_${p}_CONTENTS=${GAP_DIR}/pkg/${d}"
+    eval "${PN}_${p}_REQUIRES=gap"
+done
+
+gap_4ti2Interface_REQUIRES+=" io"
+gap_Alnuth_REQUIRES+=" gap-polycyclic"
+gap_anupq_REQUIRES+=" gap-autpgrp"
+gap_automgrp_REQUIRES+=" gap-fga"
+gap_Convex_REQUIRES+=" gap-Modules"
+gap_corelg_REQUIRES+=" gap-sla"
+gap_cryst_REQUIRES+=" gap-polycyclic"
+gap_crystcat_REQUIRES+=" gap-cryst"
+gap_cubefree_REQUIRES+=" gap-grpconst gap-polycyclic"
+gap_cvec_REQUIRES+=" gap-io gap-orb"
+gap_design_REQUIRES+=" gap-grape"
+gap_ExamplesForHomalg_REQUIRES+=" gap-MatricesForHomalg gap-HomalgToCAS gap-RingsForHomalg gap-Modules gap-homalg"
+gap_fr_REQUIRES+=" gap-fga gap-polycyclic"
+gap_fwtree_REQUIRES+=" gap-polycyclic gap-autpgrp gap-anupq"
+gap_GaussForHomalg_REQUIRES+=" gap-Gauss gap-MatricesForHomalg"
+gap_genss_REQUIRES+=" gap-io gap-orb"
+gap_gpd_REQUIRES+=" gap-fga"
+gap_GradedModules+=" gap-MatricesForHomalg gap-HomalgToCAS gap-RingsForHomalg gap-GradedRingForHomalg gap-Modules gap-homalg"
+gap_GradedRingForHomalg_REQUIRES+=" gap-MatricesForHomalg gap-HomalgToCAS gap-RingsForHomalg gap-Modules gap-homalg"
+gap_grpconst_REQUIRES+=" gap-autpgrp gap-irredsol"
+gap_guarana_REQUIRES+=" gap-polycyclic gap-polenta"
+gap_Hap_REQUIRES+=" gap-polycyclic"
+gap_HAPcryst_REQUIRES+=" gap-polycyclic gap-aclib gap-cryst gap-Hap gap-polymaking"
+gap_happrime_REQUIRES+=" gap-Hap"
+gap_homalg_REQUIRES+=" gap-ToolsForHomalg"
+gap_HomalgToCAS_REQUIRES+=" gap-io gap-MatricesForHomalg"
+gap_idrel_REQUIRES+=" gap-xmod"
+gap_IO_ForHomalg_REQUIRES+=" gap-io gap-HomalgToCAS"
+gap_itc_REQUIRES+=" xgap"
+gap_kan_REQUIRES+=" gap-automata"
+gap_liepring_REQUIRES+=" gap-liering"
+gap_LocalizeRingForHomalg_REQUIRES+=" gap-MatricesForHomalg gap-HomalgToCAS gap-Modules"
+gap_MatricesForHomalg_REQUIRES+=" gap-ToolsForHomalg"
+gap_Modules_REQUIRES+=" gap-MatricesForHomalg gap-ToolsForHomalg gap-homalg"
+gap_modisom_REQUIRES+=" gap-polycyclic"
+gap_nilmat_REQUIRES+=" gap-polenta"
+gap_nq_REQUIRES+=" gap-polycyclic"
+gap_openmath_REQUIRES+=" gap-io"
+gap_permut_REQUIRES+=" gap-format"
+gap_polenta_REQUIRES+=" gap-polycyclic gap-Alnuth gap-radiroot"
+gap_polycyclic_REQUIRES+=" gap-Alnuth gap-autpgrp"
+gap_PolymakeInterface_REQUIRES+=" gap-AutoDoc"
+gap_radiroot_REQUIRES+=" gap-Alnuth"
+gap_rcwa_REQUIRES+=" gap-resclasses gap-grape gap-polycyclic"
+gap_rds_REQUIRES+=" gap-design"
+gap_recog_REQUIRES+=" gap-forms gap-genss gap-orb gap-factint gap-atlasrep gap-recogbase"
+gap_recogbase_REQUIRES+=" gap-forms gap-genss gap-orb gap-factint gap-atlasrep"
+gap_resclasses_REQUIRES+=" gap-polycyclic"
+gap_RingsForHomalg_REQUIRES+=" gap-MatricesForHomalg gap-HomalgToCAS"
+gap_SCO_REQUIRES+=" gap-MatricesForHomalg gap-Modules"
+gap_scscp_REQUIRES+=" gap-openmath gap-io"
+gap_semigroups_REQUIRES+=" gap-orb gap-io"
+gap_sgpviz_REQUIRES+=" gap-automata"
+gap_simpcomp_REQUIRES+=" gap-io"
+gap_sla_REQUIRES+=" gap-quagroup"
+gap_sophus_REQUIRES+=" gap-autpgrp"
+gap_spinsym_REQUIRES+=" gap-ctbllib"
+gap_SymbCompCC_REQUIRES+=" gap-polycyclic"
+gap_ToolsForHomalg_REQUIRES+=" gap-AutoDoc"
+gap_tomlib_REQUIRES+=" gap-atlasrep"
+gap_ToricVarieties_REQUIRES+=" gap-Convex gap-GradedRingForHomalg gap-GradedModules"
+gap_unitlib_REQUIRES+=" gap-io gap-laguna"
+gap_xmod_REQUIRES+=" gap-gpd gap-autpgrp"
+
+SRC_URI="
+	ftp://ftp.gap-system.org/pub/gap/gap4/tar.bz2/${PN}${LONG_VERSION}.tar.bz2
+	http://www.gap-system.org/Download/InstPackages.sh
+	update-gap-workspace.sh
+"
+PATCH_URI+=" build_gap_dll.patch"
+PATCH_URI+=" cygwin_is_not_windows.patch"
+PATCH_URI+=" force_autoconf.patch"
+PATCH_URI+=" no_cygwin_specific_junk.patch"
+PATCH_URI+=" no_cygwin32.patch"
+PATCH_URI+=" writeandcheck.patch"
+PATCH_URI+=" xgap_no_firefox.patch"
+PATCH_URI+=" x86_64_dynlink.patch"
+PATCH_URI+=" no_stack_chk_fail.patch"
+PATCH_URI+=" InstPackages.patch"
+PATCH_URI+=" anupq_compiler_warnings.patch"
+PATCH_URI+=" cohomolo_compiler_warnings.patch"
+PATCH_URI+=" guava_compiler_warnings.patch"
 
 DIFF_EXCLUDES="configure.out config.hin configure Makegap.in InstPackages.sh"
 
 src_compile() {
 	cd ${S}
 	touch configure.in
-	cd cnf
+	pushd cnf
 	touch configure.in
 	make
-	cd ..
+	popd
 	cd pkg/xgap
 	touch configure.in
-	cd cnf
+	pushd cnf
 	touch configure.in
 	make
+	popd
+	cd ..
+	for d in *
+	do
+	    case ${d} in
+		xgap) ;;
+		grape)
+		    cd ${d}
+		    rm -rf bin
+		    echo "Entering ${d}/nauty22..."
+		    cd nauty22
+		    cygautoreconf
+		    echo "Leaving ${d}/nauty22."
+		    cd ../..
+		    ;;
+		*)
+		    if [ -d ${d} ] && \
+			  ([ -f ${d}/configure.ac ] || [ -f ${d}/configure.in ])
+		    then
+			echo "Entering ${d}..."
+			cd ${d}
+			cygautoreconf
+			echo "Leaving ${d}."
+			cd ..
+		    fi
+		    ;;
+	    esac
+	done
 	lndirs
 	cd ${B}
-	./configure --with-gmp=/usr
+	./configure --with-gmp=system
 	make
-	cd pkg/xgap
-	./configure
-	make
-	cd ../ace
-	./configure
-	make
-	cd ../kbmag
-	./configure
-	make
-	cd ../nq-*
-	autoreconf
-	./configure
-	make
-	cd ../anupq
-	./configure
-	make iX86-pc-cygwin-gcc-gmp
+	cd pkg
+	cp ../InstPackages.sh .
+	chmod +x InstPackages.sh
+	./InstPackages.sh
 }
 
 src_install() {
 	cd ${S}
-	source ${B}/sysinfo.gap	# For GAParch
+	pushd pkg/atlasrep
+	chmod 1777 datagens dataword
+	popd
 	dodir /${GAP_DIR}
 	cp -al pkg ${D}/${GAP_DIR}
 	exeinto /${GAP_DIR}/pkg
-	doexe InstPackages.sh
 	cp -al ${NEEDED_DIRECTORIES} ${D}/${GAP_DIR}
 	cd ${B}
 	newbin update-gap-workspace.sh update-gap-workspace
@@ -164,7 +231,9 @@ src_install() {
 	sed -i -e "s|^GAP_DIR=.*|GAP_DIR=/${GAP_DIR}|" \
 	    ${D}/usr/bin/xgap
 	insinto /${GAP_DIR}
-	doins sysinfo.gap
+	doins sysinfo.gap-default*
+	dosym sysinfo.gap-default* /${GAP_DIR}/sysinfo.gap
+	source ${B}/sysinfo.gap	# For GAParch
 	pushd bin/${GAParch}
 	exeinto /${GAP_DIR}/bin/${GAParch}
 	doexe gap.dll gap.exe gac
@@ -172,17 +241,16 @@ src_install() {
 	doins sysinfo.gap
 	popd
 	sed -i -e \
-	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
+	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" -e \
+	    "s|^c_options=.*|c_options=-Wall -ggdb -O2 -pipe|" \
 	    ${D}/${GAP_DIR}/bin/${GAParch}/gac
 	sed -i -e \
 	    "s|^gap_bin=.*|gap_bin=/${GAP_DIR}/bin/${GAParch}|" \
 	    ${D}/${GAP_DIR}/bin/${GAParch}/sysinfo.gap
-	cp -a pkg/ace/bin ${D}/${GAP_DIR}/pkg/ace
-	cp -a pkg/anupq/bin ${D}/${GAP_DIR}/pkg/anupq
-	cp -a pkg/kbmag/bin ${D}/${GAP_DIR}/pkg/kbmag
-	cp -a pkg/nq-*/bin ${D}/${GAP_DIR}/pkg/nq-2.4
-	dosym /${GAP_DIR}/pkg/nq-2.4/bin/${GAParch}/nq.exe /usr/bin/nq
-	cp -a pkg/xgap/bin ${D}/${GAP_DIR}/pkg/xgap
+	for p in ace anupq Browse cohomolo cvec edim example fplsa Gauss grape guava io kbmag nq orb xgap
+	do
+	    cp -a pkg/${p}*/bin ${D}/${GAP_DIR}/pkg/${p}*
+	done
 	cd ${D}/${GAP_DIR}/pkg/xgap/bin
 	rm xgap.sh
 	cd *-cygwin-*

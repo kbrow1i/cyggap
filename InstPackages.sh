@@ -16,11 +16,8 @@ cd ace
 make
 cd ..
 
-# on Linux with gmp in standard place and gap.sh script in standard 
-# path as 'gap' just do 'make', otherwise check installation
-# instructions - configure output gives hints.
-cd anupq
-./configure ../..
+cd anupq*
+./configure
 make
 cd ..
 
@@ -60,11 +57,6 @@ make TOPDIR=`pwd` Gmp
 make TOPDIR=`pwd` CFLAGS=`-O2`
 cd ../..
 
-cd citrus*
-./configure
-make 
-cd ..
-
 cd cohomolo
 ./configure 
 cd standalone/progs.d
@@ -89,7 +81,7 @@ make
 cd ..
 
 cd float-*
-./configure 
+./configure
 make
 cd ..
 
@@ -139,7 +131,7 @@ cd ..
 cd nq-*
 ./configure
 # change paths to your GMP installation
-# make GNU_MP_LIB=../../Gmplib/lib GNU_MP_INC=../../Gmplib/include
+#make GNU_MP_LIB=../../Gmplib/lib GNU_MP_INC=../../Gmplib/include
 make
 cd ..
 

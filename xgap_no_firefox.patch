@@ -1,5 +1,5 @@
---- origsrc/gap4r6/pkg/xgap/lib/window.g	2013-07-19 05:09:51.000000000 -0400
-+++ src/gap4r6/pkg/xgap/lib/window.g	2013-08-29 13:47:23.644326500 -0400
+--- origsrc/gap4r7/pkg/xgap/lib/window.g	2013-07-19 05:09:51.000000000 -0400
++++ src/gap4r7/pkg/xgap/lib/window.g	2013-08-29 13:47:23.644326500 -0400
 @@ -433,5 +433,5 @@ fi;
  
  GAPInfo.TermEncoding := "ASCII";

@@ -1,5 +1,5 @@
---- origsrc/gap4r6/src/sysfiles.c	2013-08-22 16:09:32.768343200 -0400
-+++ src/gap4r6/src/sysfiles.c	2013-08-22 16:31:33.409879600 -0400
+--- origsrc/gap4r7/src/sysfiles.c	2013-08-22 16:09:32.768343200 -0400
++++ src/gap4r7/src/sysfiles.c	2013-08-22 16:31:33.409879600 -0400
 @@ -84,12 +84,17 @@ extern int errno;
  
  /* utility to check return value of 'write'  */
