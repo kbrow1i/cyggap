@@ -1,5 +1,5 @@
---- origsrc/gap4r6/lib/helpview.gi	2013-07-20 16:02:02.000000000 -0400
-+++ src/gap4r6/lib/helpview.gi	2013-08-28 09:47:51.383632500 -0400
+--- origsrc/gap4r7/lib/helpview.gi	2013-07-20 16:02:02.000000000 -0400
++++ src/gap4r7/lib/helpview.gi	2013-08-28 09:47:51.383632500 -0400
 @@ -86,6 +86,22 @@ if ARCH_IS_WINDOWS() then
    end
    );
@@ -23,8 +23,8 @@
  elif ARCH_IS_MAC_OS_X() then
    # html version using Mac OS X default browser
    HELP_VIEWER_INFO.("mac default browser") := rec (
---- origsrc/gap4r6/lib/system.g	2013-07-20 16:02:25.000000000 -0400
-+++ src/gap4r6/lib/system.g	2013-08-29 11:27:31.804340700 -0400
+--- origsrc/gap4r7/lib/system.g	2013-07-20 16:02:25.000000000 -0400
++++ src/gap4r7/lib/system.g	2013-08-29 11:27:31.804340700 -0400
 @@ -380,6 +380,24 @@ end );
  ##  <#/GAPDoc>
  ##
@@ -50,8 +50,8 @@
    return POSITION_SUBSTRING (GAPInfo.Architecture, "cygwin", 0) <> fail;
  end);
  
---- origsrc/gap4r6/src/streams.c	2013-08-24 11:48:41.799753600 -0400
-+++ src/gap4r6/src/streams.c	2013-08-24 11:54:22.383233900 -0400
+--- origsrc/gap4r7/src/streams.c	2013-08-24 11:48:41.799753600 -0400
++++ src/gap4r7/src/streams.c	2013-08-24 11:54:22.383233900 -0400
 @@ -1957,9 +1957,6 @@ Obj FuncREAD_ALL_FILE (
  	SET_LEN_STRING(str, len);
  	syBuffers[bufno].bufstart += lstr;
@@ -94,8 +94,8 @@
      ResizeBag( str, SIZEBAG_STRINGLEN(len) );
  
      /* and return                                                          */
---- origsrc/gap4r6/src/sysfiles.c	2013-08-24 11:48:43.151831000 -0400
-+++ src/gap4r6/src/sysfiles.c	2013-08-24 12:00:49.080351700 -0400
+--- origsrc/gap4r7/src/sysfiles.c	2013-08-24 11:48:43.151831000 -0400
++++ src/gap4r7/src/sysfiles.c	2013-08-24 12:00:49.080351700 -0400
 @@ -1654,19 +1654,6 @@ Int SyFseek (
  */
  #if HAVE_SGTTY_H || HAVE_TERMIO_H || HAVE_TERMIOS_H
@@ -129,8 +129,8 @@
  
  #if HAVE_MKDTEMP
  Char * SyTmpdir( const Char * hint )
---- origsrc/gap4r6/src/system.c	2013-08-24 11:48:41.807754100 -0400
-+++ src/gap4r6/src/system.c	2013-08-24 12:04:12.878008300 -0400
+--- origsrc/gap4r7/src/system.c	2013-08-24 11:48:41.807754100 -0400
++++ src/gap4r7/src/system.c	2013-08-24 12:04:12.878008300 -0400
 @@ -1467,17 +1465,6 @@ void SySleep ( UInt secs )
  void SyExit (
      UInt                ret )

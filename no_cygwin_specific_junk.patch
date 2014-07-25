@@ -1,6 +1,46 @@
---- origsrc/gap4r6/src/streams.c	2013-07-20 16:11:08.000000000 -0400
-+++ src/gap4r6/src/streams.c	2013-08-18 14:10:39.057716900 -0400
-@@ -2125,8 +2097,6 @@ Obj FuncREAD_STRING_FILE (
+--- origsrc/gap4r7/pkg/cvec-2.5.1/src/cvec.c	2014-07-14 14:50:43.984262100 -0400
++++ src/gap4r7/pkg/cvec-2.5.1/src/cvec.c	2014-07-14 15:10:24.758798500 -0400
+@@ -41,10 +41,6 @@ WORD myarena[(2048*1024+1024*1024)/4];
+ WORD *arenastart;
+ #endif
+ 
+-#if SYS_IS_CYGWIN32
+-#include <cygwin/in.h>
+-#endif
+-
+ /* Our basic unit is a C unsigned long: */
+ typedef unsigned long Word;  /* Our basic unit for operations, 32 or 64 bits */
+ #define Word32 UInt4
+--- origsrc/gap4r7/pkg/io-4.3.1/src/io.c	2014-07-14 14:50:43.997262900 -0400
++++ src/gap4r7/pkg/io-4.3.1/src/io.c	2014-07-14 15:12:15.240117700 -0400
+@@ -77,16 +77,12 @@
+ #ifdef HAVE_NETINET_TCP_H
+ #include <netinet/tcp.h>
+ #endif
+-#if SYS_IS_CYGWIN32
+-#include <cygwin/in.h>
+-#endif
+ 
+ /* The following seems to be necessary to run under modern gcc compilers
+  * which have the ssp stack checking enabled. Hopefully this does not
+  * hurt in future or other versions... */
+ #ifdef __GNUC__
+ #if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
+-#if SYS_IS_CYGWIN32 == 0
+ extern void __stack_chk_fail();
+ void __stack_chk_fail_local (void)
+ {
+@@ -94,7 +90,6 @@ void __stack_chk_fail_local (void)
+ }
+ #endif
+ #endif
+-#endif
+ 
+ 
+ /* Functions that are done:
+--- origsrc/gap4r7/src/streams.c	2014-07-14 14:50:43.512235100 -0400
++++ src/gap4r7/src/streams.c	2014-07-14 15:03:33.672285700 -0400
+@@ -2097,8 +2097,6 @@ Obj FuncREAD_STRING_FILE (
              "you can replace <fid> via 'return <fid>;'" );
      }
  
@@ -9,7 +49,7 @@
  #if HAVE_STAT
      /* first try to get the whole file as one chunk, this avoids garbage
         collections because of the GROW_STRING calls below    */
-@@ -2146,7 +2116,6 @@ Obj FuncREAD_STRING_FILE (
+@@ -2118,7 +2116,6 @@ Obj FuncREAD_STRING_FILE (
          }
      }
  #endif
@@ -17,9 +57,9 @@
      /* read <fid> until we see  eof   (in 20kB pieces)                     */
      str = NEW_STRING(0);
      len = 0;
---- origsrc/gap4r6/src/sysfiles.c	2013-07-20 16:11:08.000000000 -0400
-+++ src/gap4r6/src/sysfiles.c	2013-08-18 14:18:39.582961400 -0400
-@@ -1083,7 +1079,6 @@ extern void syStopraw (
+--- origsrc/gap4r7/src/sysfiles.c	2014-07-14 14:50:44.007263400 -0400
++++ src/gap4r7/src/sysfiles.c	2014-07-14 15:03:33.690286800 -0400
+@@ -1083,7 +1083,6 @@ extern void syStopraw (
    struct termio   syOld, syNew;           /* old and new terminal state      */
  
    #ifndef TCSETAW
@@ -27,8 +67,8 @@
      #define TCSETAW TCSETA
    #endif
  
---- origsrc/gap4r6/src/system.c	2013-07-20 16:11:08.000000000 -0400
-+++ src/gap4r6/src/system.c	2013-08-18 14:07:51.734222600 -0400
+--- origsrc/gap4r7/src/system.c	2014-07-14 14:50:43.523235700 -0400
++++ src/gap4r7/src/system.c	2014-07-14 15:03:33.704287600 -0400
 @@ -458,7 +458,7 @@ UInt SyStopTime;
  **  Use use   'getrusage'  if possible,  because  it gives  us  a much better
  **  resolution. 
@@ -50,7 +90,7 @@
  
  #include <time.h> /* for CLOCKS_PER_SEC */
  
-@@ -1782,12 +1763,8 @@ void InitSystem (
+@@ -1768,12 +1766,8 @@ void InitSystem (
      SyAllocPool = 4096L*1024*1024;   /* Note this is in bytes! */
  #else
      SyStorMax = 1024*1024L;          /* This is in kB! */
@@ -63,43 +103,3 @@
      SyStorOverrun = 0;
      SyStorKill = 0;
      SyStorMin = SY_STOR_MIN;         /* see system.h */
---- origsrc/gap4r6/pkg/cvec/src/cvec.c	2013-07-19 05:09:23.000000000 -0400
-+++ src/gap4r6/pkg/cvec/src/cvec.c	2013-08-21 10:05:48.147248900 -0400
-@@ -44,10 +44,6 @@ WORD myarena[(2048*1024+1024*1024)/4];
- WORD *arenastart;
- #endif
- 
--#if SYS_IS_CYGWIN32
--#include <cygwin/in.h>
--#endif
--
- /* Our basic unit is a C unsigned long: */
- typedef unsigned long Word;  /* Our basic unit for operations, 32 or 64 bits */
- #define Word32 UInt4
---- origsrc/gap4r6/pkg/io/src/io.c	2013-07-19 05:09:32.000000000 -0400
-+++ src/gap4r6/pkg/io/src/io.c	2013-08-21 10:03:34.639612700 -0400
-@@ -80,16 +80,12 @@ const char * Revision_io_c =
- #ifdef HAVE_NETINET_TCP_H
- #include <netinet/tcp.h>
- #endif
--#if SYS_IS_CYGWIN32
--#include <cygwin/in.h>
--#endif
- 
- /* The following seems to be necessary to run under modern gcc compilers
-  * which have the ssp stack checking enabled. Hopefully this does not
-  * hurt in future or other versions... */
- #ifdef __GNUC__
- #if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
--#if SYS_IS_CYGWIN32 == 0
- extern void __stack_chk_fail();
- void __stack_chk_fail_local (void)
- {
-@@ -97,7 +93,6 @@ void __stack_chk_fail_local (void)
- }
- #endif
- #endif
--#endif
- 
- 
- /* Functions that are done:

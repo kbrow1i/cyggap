@@ -1,0 +1,250 @@
+--- origsrc/gap4r7/pkg/anupq-3.1.1/include/pq_functions.h	2014-05-14 09:14:23.000000000 -0400
++++ src/gap4r7/pkg/anupq-3.1.1/include/pq_functions.h	2014-07-24 10:39:56.025386600 -0400
+@@ -18,6 +18,7 @@
+ #include "pcp_vars.h"
+ #include "pga_vars.h"
+ #include "exp_vars.h"
++#include "pretty_filterfns.h"
+ 
+ void autgp_order ();
+ void collect_defining_generator (int ptr, int cp, struct pcp_vars *pcp);
+@@ -133,6 +134,132 @@ void vector_to_string (int cp, int str,
+ int vector_to_word (int cp, int ptr, struct pcp_vars *pcp);
+ void string_to_vector (int str, int cp, struct pcp_vars *pcp);
+ 
++/* Added by KB: */
++int outside (int x, int y);
++int restore_auts (FILE *ifp, int offset, int nmr_saved, int retain, int *new_index, int *head, int *list);
++int vsystem(char *string);
++void GAP_factorise_subgroup (FILE *GAP_input, int **S, int index, int *subset, struct pga_vars *pga, struct pcp_vars *pcp);
++void GAP_presentation (FILE *file, struct pcp_vars *pcp, int aspcgroup);
++void collect_def_comm (int ptr, int cp, struct pcp_vars *pcp);
++void collect_gen_word (int ptr, int length, int cp, struct pcp_vars *pcp);
++void collect_word (int ptr, int cp, struct pcp_vars *pcp);
++void collectp2 (int pointer, int collected_part, struct pcp_vars *pcp);
++void compute_images (int **A, int K, int depth, int *permutation, struct pga_vars *pga);
++void delete_tables (int type, struct pcp_vars *pcp);
++void find_available_positions (int K, int **A, int **Image, int **row, int **column, int depth, struct pga_vars *pga);
++void find_commutator (int cp1, int cp2, int cp3, int cp4, int result, struct pcp_vars *pcp);
++void find_padic (int x, int k, int p, int *expand, struct pga_vars *pga);
++void invert_generator (int gen, int exp, int cp, struct pcp_vars *pcp);
++void invert_word (int ptr, int cp, struct pcp_vars *pcp);
++void jacobi (int c, int b, int a, int ptr, struct pcp_vars *pcp);
++void print_auts (int nmr_auts, int nmr_gens, int ***auts, struct pcp_vars *pcp);
++void print_matrix (int **a, int n, int m);
++void reduce_matrix (int **a, int nmr_rows, int nmr_columns, int p, struct pga_vars *pga);
++void save_auts (FILE *ofp, int *head, int *list, struct pcp_vars *pcp);
++void setup_defgen_word_to_collect (FILE *file, int format, int type, int cp, struct pcp_vars *pcp);
++void setup_word_to_print (char *type, int cp, int str, struct pcp_vars *pcp);
++void solve_equation (int cp1, int cp2, int result, struct pcp_vars *pcp);
++void stack_overflow (void);
++void text (int message, int arg1, int arg2, int arg3, int arg4);
++void trace_action (int *permutation, int j, int *a, int *b, char *c);
++void update (int ptr, struct pcp_vars *pcp);
++void update_image (int **A, int column, int **Image, int row, struct pga_vars *pga);
++void defaults_pga (int option, int *k, struct pga_vars *flag, struct pga_vars *pga, struct pcp_vars *pcp);
++void copy_flags (struct pga_vars *flag, struct pga_vars *pga);
++int reduced_covers (FILE *descendant_file, FILE *covers_file, int k, int ***auts, struct pga_vars *pga, struct pcp_vars *pcp);
++void start_stage (FILE *descendant_file, int k, int ***auts, struct pga_vars *pga, struct pcp_vars *pcp);
++void set_values (struct pga_vars *pga, struct pcp_vars *pcp);
++int int_power (int x, int n);
++int invert_modp (int x, int p);
++int find_index (int u, int v, int **definition, int q);
++void assemble_matrix (int **A, int t, int **auts, struct pcp_vars *pcp);
++int echelonise_matrix (int **a, int nmr_rows, int nmr_columns, int p, int *subset, struct pga_vars *pga);
++int available_positions (int *K, struct pga_vars *pga);
++int read_option (int maxoption);
++void print_structure (int first, int last, struct pcp_vars *pcp);
++int runTime (void);
++int construct (int call_depth, struct pga_vars *flag, int option, FILE *output_file, FILE *start_file, int k, int order_bound, int group_nmr, struct pga_vars *pga, struct pcp_vars *pcp);
++void read_matrix (int **a, int n, int m);
++int find_image (int label, int **auts, struct pga_vars *pga, struct pcp_vars *pcp);
++int close_subgroup (int k, int ***auts, struct pga_vars *pga, struct pcp_vars *pcp);
++void permute_elements (void);
++void insoluble_compute_orbits (int **orbit, int **backptr, char **schreier, int **perms, struct pga_vars *pga);
++void compute_orbits (int **a, int **b, char **c, int **perms, struct pga_vars *pga);
++void orbit_summary (int *length, struct pga_vars *pga);
++void setup_word_to_collect (FILE *file, int format, int type, int cp, struct pcp_vars *pcp);
++void setup_to_solve_equation (int format, struct pcp_vars *pcp);
++void calculate_commutator (int format, struct pcp_vars *pcp);
++void print_level (int *output, struct pcp_vars *pcp);
++void setup (struct pcp_vars *pcp);
++void tail_info (int *tail_type);
++void tails (int type, int work_class, int start_weight, int end_weight, struct pcp_vars *pcp);
++void consistency_info (int *consistency_flag);
++void compute_permutation (int *permutation, int **A, struct pga_vars *pga);
++void copy (int old, int length, int new, struct pcp_vars *pcp);
++Logical is_identity (int **a, int n, int start);
++void initialise_pga (struct pga_vars *pga, struct pcp_vars *pcp);
++int get_description (char *string, int *len, int **seq, struct pcp_vars *pcp);
++void options (int call, int format, struct pcp_vars *pcp);
++void write_GAP_library (FILE *file, struct pcp_vars *pcp);
++void GAP_auts (FILE *file, int ***central, int ***stabiliser, struct pga_vars *pga, struct pcp_vars *pcp);
++int pquotient (int max_class, int output, FILE *file, int format, struct pcp_vars *pcp);
++void down_class (int ptr, struct pcp_vars *pcp);
++void setup_echelon (int *queue, int *queue_length, int cp, struct pcp_vars *pcp);
++int process_parameters (int argc, char **argv);
++void Allocate_WorkSpace (int work_space, struct pcp_vars *pcp);
++void isom_options (int format, struct pcp_vars *pcp);
++int queue_space (int **queue, int **long_queue, int *current_qlength, int *prev_qlength, struct pcp_vars *pcp);
++void consistency (int type, int *queue, int *queue_length, int wc, struct pcp_vars *pcp);
++void exponent_info (struct exp_vars *exp_flag, struct pcp_vars *pcp);
++void class1_eliminate (struct pcp_vars *pcp);
++void set_maxoccur (struct pcp_vars *pcp);
++void calculate_jacobi (struct pcp_vars *pcp);
++void Setup_Action (int **head, int **list, int ***auts, int nmr_of_exponents, struct pcp_vars *pcp);
++void Extend_Auts (int **head, int **list, int start, struct pcp_vars *pcp);
++void close_relations (Logical report, int limit, int queue_type, int *head, int *list, int *queue, int length, int *long_queue, int *long_queue_length, struct pcp_vars *pcp);
++void list_commutators (int *queue, int *queue_length, struct pcp_vars *pcp);
++void List_Auts (int *head, int *list, int first, int last, struct pcp_vars *pcp);
++void read_relator_file (int *queue, int *queue_length, struct pcp_vars *pcp);
++void commute_defining_generators (int format, struct pcp_vars *pcp);
++void compact (struct pcp_vars *pcp);
++void evaluate_formula (int *queue, int *queue_length, struct pcp_vars *pcp);
++void restore_automorphisms (FILE *ifp, int **head, int **list, struct pcp_vars *pcp);
++void interactive_pq (Logical group_present, int format, int output_level, int **head, int **list, struct pcp_vars *pcp);
++void pgroup_generation (Logical *group_present, struct pcp_vars *pcp);
++int valid (int option, int maxoption);
++void setup_identity_perm (int *permutation, struct pga_vars *pga);
++Logical valid_matrix (int **a, int n, int p, int start);
++void iteration_information (int *subgroup_rank, struct pga_vars *flag, int *class_bound, int *order_bound, int **step_sequence, struct pga_vars *pga, struct pcp_vars *pcp);
++void iteration (int call_depth, int *step_sequence, int subgroup_rank, struct pga_vars *flag, FILE *input_file, int nmr_of_descendants, int class_bound, int order_bound, struct pga_vars *pga, struct pcp_vars *pcp);
++void interactive_pga (Logical group_present, FILE *StartFile, int group_nmr, int ***auts, struct pga_vars *pga, struct pcp_vars *pcp);
++void read_parameters (int format, int *max_class, int *output, struct pcp_vars *pcp);
++int pretty_filter (FILE *file, int *max_class, int *output, struct pcp_vars *pcp);
++int check_for_error (struct pcp_vars *pcp);
++void read_gen_name_array (FILE *file);
++void pc_word_init (word *wp);
++void pc_word_reset (word *wp);
++void word_clear (word *wp);
++void initialise_pcp (int output, struct pcp_vars *pcp);
++int layer (int generator, struct pcp_vars *pcp);
++void print_word (int ptr, struct pcp_vars *pcp);
++void pretty_read_relations (int output, int *max_class, struct pcp_vars *pcp);
++void pretty_read_generators (struct pcp_vars *pcp);
++void word_init (word *wp);
++void word_put_last (word *wp, gen_type g);
++void word_factor (word *wp, word *wwp, int *ep);
++void expand_commutator (int *s, int t);
++void print_orbit_information (int *a, int *b, char *c, struct pga_vars *pga);
++void update_name (char *string, int x, int step_size);
++void factorise_subgroup (int **S, int index, int *subset, struct pga_vars *pga, struct pcp_vars *pcp);
++void update_autgp_order (int orbit_length, struct pga_vars *pga, struct pcp_vars *pcp);
++void report_autgp_order (struct pga_vars *pga, struct pcp_vars *pcp);
++void save_pga (FILE *ofp, int ***central, int ***stabiliser, struct pga_vars *pga, struct pcp_vars *pcp);
++void list_orbit (int j, int *b);
++void insoluble_stab_gens (int rep, int orbit_length, struct pga_vars *pga, struct pcp_vars *pcp);
++void read_class_bound (int *class_bound, struct pcp_vars *pcp);
++void read_order_bound (int *order_bound, struct pcp_vars *pcp);
++void read_relations (struct pcp_vars *pcp);
++
+ #if defined (GROUP)
+ void collect (int pointer, int collected_part, struct pcp_vars *pcp);
+ #endif
+--- origsrc/gap4r7/pkg/anupq-3.1.1/src/expand_commutator.c	2014-05-14 09:14:23.000000000 -0400
++++ src/gap4r7/pkg/anupq-3.1.1/src/expand_commutator.c	2014-07-24 10:39:45.845804400 -0400
+@@ -15,6 +15,7 @@
+ 
+ void add (int *x, int *y);
+ void invert_symbols (int *x);
++int length (int *s);
+ 
+ /* expand the commutator of s and t */
+ 
+--- origsrc/gap4r7/pkg/anupq-3.1.1/src/invert_auts.c	2014-05-14 09:14:23.000000000 -0400
++++ src/gap4r7/pkg/anupq-3.1.1/src/invert_auts.c	2014-07-23 17:55:34.137603800 -0400
+@@ -56,7 +56,7 @@ int*** invert_automorphisms (int ***auts
+ 	    collect_image_of_string (string, cp, auts[alpha], pcp);
+ 	    for (j = 1; j <= pcp->lastg; ++j)
+ 	       Power[i][j] = y[cp + j];
+-	    print_matrix (Power, pcp->lastg, pcp->lastg, 1);
++	    print_matrix (Power, pcp->lastg, pcp->lastg);
+ 	 }
+       }
+    }
+--- origsrc/gap4r7/pkg/anupq-3.1.1/src/permute_elements.c	2014-05-14 09:14:23.000000000 -0400
++++ src/gap4r7/pkg/anupq-3.1.1/src/permute_elements.c	2014-07-24 11:14:22.157562600 -0400
+@@ -93,7 +93,8 @@ void permute_elements (void)
+    int m;
+    int q, x;
+    int *orbit;
+-   int *schreier, *backptr;
++   int *backptr;
++   char *schreier;
+    int nmr_maps;
+    int Degree;
+ 
+--- origsrc/gap4r7/pkg/anupq-3.1.1/src/soluble_orbits.c	2014-05-14 09:14:23.000000000 -0400
++++ src/gap4r7/pkg/anupq-3.1.1/src/soluble_orbits.c	2014-07-24 10:21:54.675536900 -0400
+@@ -137,37 +137,41 @@ void trace_action (int *permutation, int
+ /* find the orbit representatives, number of orbits, and orbit lengths;
+    also list the individual orbits */
+ 
+-int* soluble_find_orbit_reps (int *a, int *b, struct pga_vars *pga)
+-{
+-   register int j;
+-   register int counter = 0;
+-   int *orbit_length;
+-
+-   /* find the number of orbits */
+-   pga->nmr_orbits = 0;
+-   for (j = 1; j <= pga->Degree; ++j)  
+-      if (a[j] == j)  
+-	 ++pga->nmr_orbits;
+-
+-   /* set up space to store orbit representatives and orbit lengths */
+-   pga->rep = allocate_vector (pga->nmr_orbits, 1, 0);
+-   orbit_length = allocate_vector (pga->nmr_orbits, 1, 0);
+-
+-   /* list the elements of each orbit and find its length */
+-   for (j = 1; j <= pga->Degree && counter <= pga->nmr_orbits; ++j) { 
+-      if (a[j] == j)  {
+-	 ++counter;
+-	 pga->rep[counter] = j;
+-	 if (pga->print_orbits)
+-	    printf ("\nOrbit %d:\n", counter);
+-	 orbit_length[counter] = list_orbit (j, b);
+-	 if (pga->print_orbits)
+-	    printf ("\nLength is %d\n", orbit_length[counter]);  
+-      }
+-   }
++/* int* soluble_find_orbit_reps (int *a, int *b, struct pga_vars *pga) */
++/* { */
++/*    register int j; */
++/*    register int counter = 0; */
++/*    int *orbit_length; */
++
++/*    /\* find the number of orbits *\/ */
++/*    pga->nmr_orbits = 0; */
++/*    for (j = 1; j <= pga->Degree; ++j)   */
++/*       if (a[j] == j)   */
++/* 	 ++pga->nmr_orbits; */
++
++/*    /\* set up space to store orbit representatives and orbit lengths *\/ */
++/*    pga->rep = allocate_vector (pga->nmr_orbits, 1, 0); */
++/*    orbit_length = allocate_vector (pga->nmr_orbits, 1, 0); */
++
++/*    /\* list the elements of each orbit and find its length *\/ */
++/*    for (j = 1; j <= pga->Degree && counter <= pga->nmr_orbits; ++j) {  */
++/*       if (a[j] == j)  { */
++/* 	 ++counter; */
++/* 	 pga->rep[counter] = j; */
++/* 	 if (pga->print_orbits) */
++/* 	    printf ("\nOrbit %d:\n", counter); */
++
++/* 	 /\* KB: list_orbit should presumably be changed to return the */
++/* 	    orbit length.  But soluble_find_orbit_reps is not used, so */
++/* 	    I've just commented out the entire function. *\/ */
++/* 	 orbit_length[counter] = list_orbit (j, b); */
++/* 	 if (pga->print_orbits) */
++/* 	    printf ("\nLength is %d\n", orbit_length[counter]);   */
++/*       } */
++/*    } */
+ 
+-   return orbit_length;
+-}
++/*    return orbit_length; */
++/* } */
+ 
+ /* list the orbit with leading term j and return its length */
+ 

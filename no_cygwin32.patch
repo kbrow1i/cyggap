@@ -1,6 +1,6 @@
---- origsrc/gap4r6/cnf/configure.in	2013-07-20 16:02:25.000000000 -0400
-+++ src/gap4r6/cnf/configure.in	2013-08-18 13:49:24.356476800 -0400
-@@ -326,7 +326,7 @@ AC_SUBST(ITANIUMOBJ)
+--- origsrc/gap4r7/cnf/configure.in	2014-05-24 16:03:14.000000000 -0400
++++ src/gap4r7/cnf/configure.in	2014-07-14 12:10:55.035668100 -0400
+@@ -341,7 +341,7 @@ AC_SUBST(ITANIUMOBJ)
  
  case "$host_os" in
    *cygwin*)
@@ -9,8 +9,78 @@
      ;;
    *darwin*)
      AC_DEFINE(SYS_IS_DARWIN, 1, [define if this is the Darwin port])
---- origsrc/gap4r6/src/sysfiles.c	2013-07-20 16:11:08.000000000 -0400
-+++ src/gap4r6/src/sysfiles.c	2013-08-18 13:51:20.046280000 -0400
+--- origsrc/gap4r7/pkg/cvec-2.5.1/configure.ac	2014-05-14 09:14:41.000000000 -0400
++++ src/gap4r7/pkg/cvec-2.5.1/configure.ac	2014-07-14 12:19:35.046411100 -0400
+@@ -24,9 +24,9 @@ AC_CHECK_SIZEOF([void **])
+ AC_CYGWIN
+ AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
+ if test "$CYGWIN" = "yes"; then
+-  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
+ else
+-  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
+ fi
+      
+ AC_CONFIG_FILES([Makefile])
+--- origsrc/gap4r7/pkg/float-0.5.18/m4/ac_sys_is.m4	2014-05-14 09:14:44.000000000 -0400
++++ src/gap4r7/pkg/float-0.5.18/m4/ac_sys_is.m4	2014-07-14 12:23:50.418017500 -0400
+@@ -3,9 +3,9 @@ AC_DEFUN([AC_SYS_IS_CYGWIN],[
+ AC_CYGWIN
+ AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
+ if test "$CYGWIN" = "yes"; then
+-  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
+ else
+-  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
+ fi
+ ])
+ 
+--- origsrc/gap4r7/pkg/fr-2.1.1/cnf/m4/ac_sys_is.m4	2014-05-14 09:14:46.000000000 -0400
++++ src/gap4r7/pkg/fr-2.1.1/cnf/m4/ac_sys_is.m4	2014-07-14 12:24:43.257039700 -0400
+@@ -3,9 +3,9 @@ AC_DEFUN([AC_SYS_IS_CYGWIN],[
+ AC_CYGWIN
+ AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
+ if test "$CYGWIN" = "yes"; then
+-  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
+ else
+-  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
+ fi
+ ])
+ 
+--- origsrc/gap4r7/pkg/io-4.3.1/configure.ac	2014-05-14 09:14:56.000000000 -0400
++++ src/gap4r7/pkg/io-4.3.1/configure.ac	2014-07-14 12:26:14.520259700 -0400
+@@ -51,9 +51,9 @@ AC_CHECK_FUNCS([dup2 gethostbyname lchow
+ AC_CYGWIN
+ AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
+ if test "$CYGWIN" = "yes"; then
+-  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
+ else
+-  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
+ fi
+      
+ AC_CONFIG_FILES([Makefile])
+--- origsrc/gap4r7/pkg/orb-4.7.1/configure.ac	2014-05-14 09:15:17.000000000 -0400
++++ src/gap4r7/pkg/orb-4.7.1/configure.ac	2014-07-14 12:27:03.273048200 -0400
+@@ -24,9 +24,9 @@ AC_CHECK_SIZEOF([void **])
+ AC_CYGWIN
+ AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
+ if test "$CYGWIN" = "yes"; then
+-  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
+ else
+-  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
++  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
+ fi
+      
+ AC_CONFIG_FILES([Makefile])
+--- origsrc/gap4r7/src/sysfiles.c	2014-07-14 11:54:49.430438700 -0400
++++ src/gap4r7/src/sysfiles.c	2014-07-14 12:10:55.040668400 -0400
 @@ -81,7 +81,7 @@ typedef void       sig_handler_t ( int )
  extern int errno;
  #endif
@@ -56,7 +126,7 @@
      if(strlen(mode) >= 2 && mode[1] == 'b')
         flags |= O_BINARY;
  #endif
-@@ -3122,7 +3122,7 @@ extern char ** environ;
+@@ -3110,7 +3110,7 @@ extern char ** environ;
  
  void NullSignalHandler(int scratch) {}
  
@@ -65,73 +135,3 @@
  
  UInt SyExecuteProcess (
      Char *                  dir,
---- origsrc/gap4r6/pkg/cvec/configure.ac	2013-07-19 05:09:22.000000000 -0400
-+++ src/gap4r6/pkg/cvec/configure.ac	2013-08-21 09:55:42.930632500 -0400
-@@ -23,9 +23,9 @@ AC_CHECK_SIZEOF([void **])
- AC_CYGWIN
- AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
- if test "$CYGWIN" = "yes"; then
--  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
- else
--  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
- fi
- 
- 
---- origsrc/gap4r6/pkg/float-0.5.10/cnf/m4/ac_sys_is.m4	2013-07-19 05:09:25.000000000 -0400
-+++ src/gap4r6/pkg/float-0.5.10/cnf/m4/ac_sys_is.m4	2013-08-21 09:58:19.754602300 -0400
-@@ -3,9 +3,9 @@ AC_DEFUN([AC_SYS_IS_CYGWIN],[
- AC_CYGWIN
- AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
- if test "$CYGWIN" = "yes"; then
--  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
- else
--  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
- fi
- ])
- 
---- origsrc/gap4r6/pkg/fr-2.0.3/cnf/m4/ac_sys_is.m4	2013-07-19 05:09:26.000000000 -0400
-+++ src/gap4r6/pkg/fr-2.0.3/cnf/m4/ac_sys_is.m4	2013-08-21 09:58:52.425471000 -0400
-@@ -3,9 +3,9 @@ AC_DEFUN([AC_SYS_IS_CYGWIN],[
- AC_CYGWIN
- AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
- if test "$CYGWIN" = "yes"; then
--  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
- else
--  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
- fi
- ])
- 
---- origsrc/gap4r6/pkg/io/configure.ac	2013-07-19 05:09:32.000000000 -0400
-+++ src/gap4r6/pkg/io/configure.ac	2013-08-21 09:59:48.644686600 -0400
-@@ -50,9 +50,9 @@ AC_CHECK_FUNCS([dup2 gethostbyname lchow
- AC_CYGWIN
- AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
- if test "$CYGWIN" = "yes"; then
--  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
- else
--  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
- fi
- 
- 
---- origsrc/gap4r6/pkg/orb/configure.ac	2013-07-19 05:09:38.000000000 -0400
-+++ src/gap4r6/pkg/orb/configure.ac	2013-08-21 10:04:03.691274400 -0400
-@@ -23,9 +23,9 @@ AC_CHECK_SIZEOF([void **])
- AC_CYGWIN
- AM_CONDITIONAL([SYS_IS_CYGWIN], [test "$CYGWIN" = "yes"])
- if test "$CYGWIN" = "yes"; then
--  AC_DEFINE(SYS_IS_CYGWIN32, 1, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 1, are we on CYGWIN?)
- else
--  AC_DEFINE(SYS_IS_CYGWIN32, 0, are we on CYGWIN?)
-+  AC_DEFINE(SYS_IS_CYGWIN, 0, are we on CYGWIN?)
- fi
- 
- 

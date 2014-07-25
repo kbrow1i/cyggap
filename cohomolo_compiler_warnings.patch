@@ -1,0 +1,247 @@
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/conpdc2.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/conpdc2.c	2014-07-24 11:56:09.859995000 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char inf0[],inf1[],inf2[],inf3[],outf1[],outf2[],outf3[],temp1[],temp2[],
+      ofstr[],ngn[],expg,exph,cr,dcr,hg,triv,cong;
+ extern int trsp,trptr;
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/conpdcd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/conpdcd.c	2014-07-24 11:55:48.982800900 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define PSP    500000
+ # define SVSP   100000
+ # define  NPT    32767
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/crd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/crd.c	2014-07-24 12:03:46.035086700 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define SPACE    2000000
+ # define CSPACE   1000000
+ # define    WDL    20000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/crp1.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/crp1.c	2014-07-24 12:04:06.845277000 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char mult,inf0[],inf1[],inf2[],outf[],outft[],inf3[];
+ extern short  csp[],*cpsp[],**cdpsp[],***coeff[];
+ extern int space,cspace;
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/crp2.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/crp2.c	2014-07-24 12:04:18.572947800 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char mult,inf0[],inf1[],inf2[],outf[],outft[],inf3[];
+ extern short   *cst,**cpst,***cdpst,
+               csp[],*cpsp[],**cdpsp[],***coeff[];
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/egd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/egd.c	2014-07-24 11:50:58.135165300 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  NPT    32767
+ # define  MXP     501
+ # define  MNB      80
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/exa.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/exa.c	2014-07-24 15:23:04.776087600 -0400
+@@ -1,9 +1,10 @@
+ #include <stdio.h>
++#include <stdlib.h>
+ #define tmalloc(D,T,N) {D = (T *) malloc(sizeof(T)*(N)); \
+   if (D==0) { fprintf(stderr,"Out of space.\n"); return(-1);}}
+ #define tfree(D) {if (D) free( (char *) D); D=0;}
+ 
+-char *malloc();
++/* char *malloc(); */
+ 
+ extern char mult,inf1[],inf2[],inf3[],outf[];
+ extern short rwd[],
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/exb.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/exb.c	2014-07-24 15:25:28.578312600 -0400
+@@ -1,4 +1,5 @@
+ #include <stdio.h>
++#include <stdlib.h>
+ #define tmalloc(D,T,N) {D = (T *) malloc(sizeof(T)*(N)); \
+   if (D==0) { fprintf(stderr,"Out of space.\n"); return(-1);}}
+ #define tfree(D) {if (D) free( (char *) D); D=0;}
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/extpd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/extpd.c	2014-07-24 12:02:06.699405000 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ #define PSP 500000
+ #define SPACE 500000
+ #define PTRSP 10000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/gpd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/gpd.c	2014-07-24 11:47:46.357196300 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  NPT   32767
+ # define PSP    2000000
+ # define SVSP   200000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/grd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/grd.c	2014-07-24 12:01:31.396385800 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define PSP   1000000
+ # define SPACE 1000000
+ # define SVSP   100000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/mcd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/mcd.c	2014-07-24 11:58:01.313369800 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define   MSP    2500000
+ # define    MM      400
+ # define    MV     25000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/normd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/normd.c	2014-07-24 11:54:56.519800200 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  NPT    32767
+ # define PSP   1000000
+ # define SVSP  100000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/normp2.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/normp2.c	2014-07-24 11:55:29.868707600 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char cent,sym,hgst,nop,nonb[],inf1[],inf2[],inf3[],outf1[],
+      outf2[];
+ extern short  mp,mexp,mb,mnpt,prime,
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqd.c	2014-07-24 11:59:28.140336000 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  MNG      16001
+ # define  MEXP     16001
+ # define  RSP      2500000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqfns.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqfns.c	2014-07-24 12:00:53.952244100 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char  inf[],inf1[],outf1[];
+ extern short  facexp,tails,stage,depth,no,mng,mexp,
+        prime,exp,nng,class,dim,onng,*rpf,*rpb,*eexpnt,*enexpnt,**pcb,
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqmd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqmd.c	2014-07-24 11:58:32.860174100 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  MNG      1001
+ # define  MEXP     41
+ # define  RSP      100000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqmp.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqmp.c	2014-07-24 11:59:01.183794100 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char ims,act,gap,crel,inf0[],inf1[],inf2[],outf[],outfm[];
+ extern short  intexp,mng,mexp,wksp,
+        prime,exp,nng,class,*rpf,*rpb,*eexpnt,*enexpnt,**pcb,mnng,mord,
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqp1.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqp1.c	2014-07-24 11:59:53.747800600 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char inf0[],inf1[],inf2[],inf3[],inf4[],outf0[],outf1[],outf2[],outfd[],
+              inf[],act,ch1,crel,cfm,gap;
+ extern short  mv,mm,facexp,tails,stage,depth,no,mng,mcl,
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqp2.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqp2.c	2014-07-24 12:00:17.201142100 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char inf0[],inf1[],inf4[],outf0[],outf1[],outf2[],outcopy[],
+              act,ch1,norm;
+ extern short  intexp,facexp,stage,mcl,
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/nqp3.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/nqp3.c	2014-07-24 12:00:35.768204100 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char inf[],inf1[],outf1[];
+ extern short facexp,prime,exp,*rpf,*rpb,*eexpnt,**pcb,
+        dim,onng,expnt[],**comptr[],*vec[],**mat[],cp[],
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/pcd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/pcd.c	2014-07-24 11:56:37.332566300 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  NPT    32767
+ # define PSP    2000000
+ # define SVSP   200000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/readrels.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/readrels.c	2014-07-24 12:04:33.987829400 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define MLEN    500
+ # define MDIM     51
+ # define MGENS    53
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/scd.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/scd.c	2014-07-24 11:57:16.910830100 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  NPT   32767
+ # define PSP   2000000
+ # define SVSP  200000
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/scp.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/scp.c	2014-07-24 11:57:31.948690200 -0400
+@@ -1,4 +1,6 @@
+ # include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ extern char mult,subgp,sgc,sgstr[],inf0[],inf1[],inf2[],inf3[],inf4[],outf[],
+        outft[];
+ extern short  perm[],sv[],cp[],fpt[],orb[],intpow[],
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/slg.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/slg.c	2014-07-24 11:57:47.730592900 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define MP  100
+ FILE *fopen(),*ip,*op;
+ 
+--- origsrc/gap4r7/pkg/cohomolo/standalone/progs.d/syld.c	2014-05-14 09:14:31.000000000 -0400
++++ src/gap4r7/pkg/cohomolo/standalone/progs.d/syld.c	2014-07-24 11:54:24.740982500 -0400
+@@ -1,4 +1,6 @@
+ #include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
+ # define  NPT   32767
+ # define PSP    1000000
+ # define SVSP   100000
