@@ -1,0 +1,28 @@
+Known problems with the Cygwin build of Gap
+
+* Browse is incompatible with xgap (64-bit case only)
+
+Start xgap, LoadPackage( "Browse" ); output goes to the terminal, xgap
+won't accept keyboard input.
+
+* Loading cvec causes fork errors
+
+gap> LoadPackage("cvec");
+      0 [main] gap 14636 fixup_mmaps_after_fork: ReadProcessMemory failed for MAP_PRIVATE address 0x6FEFFFF0000, Win32 error 998
+    461 [main] gap 14636 C:\Users\kbrown\src\cyggap\gap-4.7.5-1.x86_64\build\bin\x86_64-unknown-cygwin-gcc-default64\gap.exe: *** fatal error in forked process - recreate_mmaps_after_fork_failed
+    995 [main] gap 14636 cygwin_exception::open_stackdumpfile: Dumping stack trace to gap.exe.stackdump
+      1 [main] gap 13292 fork: child -1 - forked process 14636 died unexpectedly, retry 0, exit code 0x100, errno 11
+──────────────────────────────────────────────────────────────────────────────
+Loading  cvec 2.5.1 (Compact vectors over finite fields)
+by Max Neunhoeffer (http://www-groups.mcs.st-and.ac.uk/~neunhoef/).
+Homepage: http://neunhoef.github.io/cvec/
+──────────────────────────────────────────────────────────────────────────────
+true
+
+I haven't checked to see if cvec actually works or not after this.
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[  ]*$"
+end:
